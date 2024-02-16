@@ -11,8 +11,15 @@ public class File {
         this.name = name;
     }
 
-    public void printNameOfFile() {
-        System.out.printf("File Name: %s\n", this.getName());
+    private void printIndents(int numberOfPrintedIndents) {
+        for (int indent = 0; indent < numberOfPrintedIndents; indent++) {
+            System.out.printf("   ");
+        }
+    }
+
+    public void printNameOfFile(int numberOfPrintedIndents) {
+        printIndents(numberOfPrintedIndents);
+        System.out.printf("[File] %s\n", this.getName());
     }
 
     public File(String givenName) {
