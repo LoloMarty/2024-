@@ -1,47 +1,38 @@
 package CS4800.Composition;
 
 public class DriverProgram {
-    public static void main(String[] args)
-    {
-        Folder[] app_Folder_Subfolders = 
-        {
-            new Folder("config"),
-            new Folder("controllers"),
-            new Folder("library"),
-            new Folder("migrations"),
-            new Folder("models"),
-            new Folder("views")
-        };
-    
-        Folder app_Folder = new Folder(app_Folder_Subfolders, "app");
-        
-        File[] sourceFiles_Files = {
-            new File(".htaccess"), 
-            new File(".htrouter.php"), 
-            new File("index.html")
-        };
-    
-        Folder[] sourceFiles_Folder_Subfolders = {
-            new Folder(".phalcon"),
-            app_Folder,
-            new Folder("cache"),
-            new Folder("public")
-        };
-    
-        Folder sourceFiles_Folder = new Folder(sourceFiles_Folder_Subfolders, sourceFiles_Files, "Source Files");
-    
-        Folder[] demo1_Folder_Subfolders = {
-            sourceFiles_Folder, 
-            new Folder("Include Path"),
-            new Folder("Remote Files")
-        };
-    
-        Folder demo1 = new Folder(demo1_Folder_Subfolders, "demo1");
+    public static void main(String[] args) {
 
+        Folder app_Folder_Subfolders = new Folder();
+        app_Folder_Subfolders.setName("app");
+
+        app_Folder_Subfolders.addFolder("config");
+        app_Folder_Subfolders.addFolder("controllers");
+        app_Folder_Subfolders.addFolder("library");
+        app_Folder_Subfolders.addFolder("migrations");
+        app_Folder_Subfolders.addFolder("models");
+        app_Folder_Subfolders.addFolder("views");
+
+        Folder sourceFiles_Folder = new Folder();
+        sourceFiles_Folder.setName("Source Files");
+        sourceFiles_Folder.addFile(".htaccess");
+        sourceFiles_Folder.addFile(".htrouter.php");
+        sourceFiles_Folder.addFile("index.html");
+
+        sourceFiles_Folder.addFolder(".phalcon");
+        sourceFiles_Folder.addFolder(app_Folder_Subfolders);
+        sourceFiles_Folder.addFolder("cache");
+        sourceFiles_Folder.addFolder("public");
+
+        Folder demo1_Folder = new Folder();
+        demo1_Folder.setName("demo1");
+        demo1_Folder.addFolder(sourceFiles_Folder);
+        demo1_Folder.addFolder("Include Path");
+        demo1_Folder.addFolder("Remote Files");
 
         System.out.println();
 
-        demo1.printEntireDirectory();
+        demo1_Folder.printEntireDirectory();
 
         System.out.println();
     }

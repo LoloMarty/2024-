@@ -5,6 +5,11 @@ public class Folder {
     private File[] files;
     private String name;
 
+    public Folder() {
+        this.subFolders = new Folder[0];
+        this.files = new File[0];
+    }
+
     public String getName() {
         return name;
     }
@@ -29,15 +34,47 @@ public class Folder {
         this.files = files;
     }
 
-    public void addFile(File givenFile) {
+    private File makeNewFile(String givenFileName) {
+        return new File(givenFileName);
+    }
+
+    private Folder makeNewFolder() {
+        return new Folder();
+    }
+
+    private int getLastIndex(File[] givenFileGroup) {
+        return givenFileGroup.length - 1;
+    }
+
+    private int getLastIndex(Folder[] givenFolderGroup) {
+        return givenFolderGroup.length - 1;
+    }
+
+    public void addFile(String givenFileNameString) {
         File[] newFilesGroup = fileGroupSizePlusOne();
         newFilesGroup = this.copyFiles(this.getFiles());
+        newFilesGroup[getLastIndex(newFilesGroup)] = makeNewFile(givenFileNameString);
         this.setFiles(newFilesGroup);
+    }
+
+    public void addFolder(String givenFolderName) {
+        Folder[] newSubFoldersGroup = subFolderGroupSizePlusOne();
+        newSubFoldersGroup = this.copyFolders(this.getSubFolders());
+
+        Folder newFolder = makeNewFolder();
+        newFolder.setName(givenFolderName);
+
+        newSubFoldersGroup[getLastIndex(newSubFoldersGroup)] = newFolder;
+
+        this.setSubFolders(newSubFoldersGroup);
     }
 
     public void addFolder(Folder givenFolder) {
         Folder[] newSubFoldersGroup = subFolderGroupSizePlusOne();
         newSubFoldersGroup = this.copyFolders(this.getSubFolders());
+
+        newSubFoldersGroup[getLastIndex(newSubFoldersGroup)] = givenFolder;
+
         this.setSubFolders(newSubFoldersGroup);
     }
 
@@ -50,7 +87,7 @@ public class Folder {
     }
 
     private Folder[] copyFolders(Folder[] foldersToCopy) {
-        Folder[] newFoldersGroupToReturn = new Folder[foldersToCopy.length];
+        Folder[] newFoldersGroupToReturn = new Folder[foldersToCopy.length + 1];
 
         for (int file = 0; file < foldersToCopy.length; file++) {
             newFoldersGroupToReturn[file] = foldersToCopy[file];
@@ -60,59 +97,13 @@ public class Folder {
     }
 
     private File[] copyFiles(File[] filesToCopy) {
-        File[] newFilesGroupToReturn = new File[filesToCopy.length];
+        File[] newFilesGroupToReturn = new File[filesToCopy.length + 1];
 
         for (int file = 0; file < filesToCopy.length; file++) {
             newFilesGroupToReturn[file] = filesToCopy[file];
         }
 
         return newFilesGroupToReturn;
-    }
-
-    public Folder(Folder[] givenSubFolders, String givenName) {
-        this.setName(givenName);
-        this.subFolders = new Folder[givenSubFolders.length];
-        this.files = new File[0];
-        this.setSubFolders(this.copyFolders(givenSubFolders));
-    }
-
-    public Folder(File[] givenFiles, String givenName) {
-        this.setName(givenName);
-        this.subFolders = new Folder[0];
-        this.files = new File[givenFiles.length];
-        this.setFiles(this.copyFiles(givenFiles));
-    }
-
-    public Folder(Folder[] givenSubFolders, File[] givenFiles, String givenName) {
-        this.setName(givenName);
-        this.subFolders = new Folder[givenSubFolders.length];
-        this.files = new File[givenFiles.length];
-
-        this.setSubFolders(this.copyFolders(givenSubFolders));
-        this.setFiles(this.copyFiles(givenFiles));
-    }
-
-    public Folder (Folder givenSubFolder, String givenName)
-    {
-        this.setName(givenName);
-        this.subFolders = new Folder[0];
-        this.files = new File[0];
-        this.addFolder(givenSubFolder);
-    }
-
-    public Folder (File givenFile, String givenName)
-    {
-        this.setName(givenName);
-        this.subFolders = new Folder[0];
-        this.files = new File[0];
-        this.addFile(givenFile);
-    }
-
-    public Folder (String givenName)
-    {
-        this.setName(givenName);
-        this.subFolders = new Folder[0];
-        this.files = new File[0];
     }
 
     private void printIndents(int numberOfPrintedIndents) {
@@ -124,14 +115,14 @@ public class Folder {
     private void printNamesOfAllFilesInCurrentFolder(int numberOfPrintedIndents) {
         for (int file = 0; file < this.files.length; file++) {
             printIndents(numberOfPrintedIndents);
-            this.files[file].printNameOfFile(numberOfPrintedIndents+1);
+            this.files[file].printNameOfFile(numberOfPrintedIndents + 1);
         }
     }
 
     private void printAllSubFoldersInCurrentFolder(int numberOfPrintedIndents) {
         for (int folder = 0; folder < this.subFolders.length; folder++) {
             printIndents(numberOfPrintedIndents);
-            this.subFolders[folder].printEntireDirectory_helper(numberOfPrintedIndents+1);
+            this.subFolders[folder].printEntireDirectory_helper(numberOfPrintedIndents + 1);
         }
     }
 
@@ -139,13 +130,16 @@ public class Folder {
         printIndents(numberOfPrintedIndents);
         System.out.printf("[Folder] %s\n", this.getName());
 
-        printNamesOfAllFilesInCurrentFolder(numberOfPrintedIndents);
         printAllSubFoldersInCurrentFolder(numberOfPrintedIndents);
+        printNamesOfAllFilesInCurrentFolder(numberOfPrintedIndents);
+
     }
 
     public void printEntireDirectory() {
-        System.out.printf("[Folder] %s", this.getName());
-        printNamesOfAllFilesInCurrentFolder(0);
+        System.out.printf("[Folder] %s\n", this.getName());
+
         printAllSubFoldersInCurrentFolder(0);
+        printNamesOfAllFilesInCurrentFolder(0);
+
     }
 }
