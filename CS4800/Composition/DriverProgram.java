@@ -3,15 +3,15 @@ package CS4800.Composition;
 public class DriverProgram {
     public static void main(String[] args) {
 
-        Folder app_Folder_Subfolders = new Folder();
-        app_Folder_Subfolders.setName("app");
+        Folder app_Folder = new Folder();
+        app_Folder.setName("app");
 
-        app_Folder_Subfolders.addFolder("config");
-        app_Folder_Subfolders.addFolder("controllers");
-        app_Folder_Subfolders.addFolder("library");
-        app_Folder_Subfolders.addFolder("migrations");
-        app_Folder_Subfolders.addFolder("models");
-        app_Folder_Subfolders.addFolder("views");
+        app_Folder.addFolder("config");
+        app_Folder.addFolder("controllers");
+        app_Folder.addFolder("library");
+        app_Folder.addFolder("migrations");
+        app_Folder.addFolder("models");
+        app_Folder.addFolder("views");
 
         Folder sourceFiles_Folder = new Folder();
         sourceFiles_Folder.setName("Source Files");
@@ -20,7 +20,7 @@ public class DriverProgram {
         sourceFiles_Folder.addFile("index.html");
 
         sourceFiles_Folder.addFolder(".phalcon");
-        sourceFiles_Folder.addFolder(app_Folder_Subfolders);
+        sourceFiles_Folder.addFolder(app_Folder);
         sourceFiles_Folder.addFolder("cache");
         sourceFiles_Folder.addFolder("public");
 
@@ -35,6 +35,7 @@ public class DriverProgram {
         demo1_Folder.printEntireDirectory();
 
         System.out.println();
+
     }
 
 }
