@@ -31,9 +31,19 @@ public class DriverProgram {
         demo1_Folder.addFolder("Remote Files");
 
         System.out.println();
-
         demo1_Folder.printEntireDirectory();
+        System.out.println();
 
+        demo1_Folder.removeFolder("app");
+
+        System.out.println();
+        demo1_Folder.printEntireDirectory();
+        System.out.println();
+
+        demo1_Folder.removeFolder("public");
+
+        System.out.println();
+        demo1_Folder.printEntireDirectory();
         System.out.println();
 
     }
