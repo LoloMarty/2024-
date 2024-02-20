@@ -10,6 +10,25 @@ public class Chessboard {
         this.chessboard = new int[dimX][dimY];
     }
 
+    public void printChessboardOnConsole()
+    {
+        System.out.println();
+
+        for(int row = 0; row < chessboard[0].length; row++)
+        {
+            for (int col = 0; col < chessboard.length; col++)
+            {
+                if(isQueen(col, row))
+                {
+                    System.out.printf("[X]  ");
+                }else{
+                    System.out.printf("[ ]  ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
     public boolean isChessboardValid()
     {
         boolean queenFoundInColumn = false;
