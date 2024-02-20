@@ -114,15 +114,19 @@ public class Folder {
 
     private void printNamesOfAllFilesInCurrentFolder(int numberOfPrintedIndents) {
         for (int file = 0; file < this.files.length; file++) {
-            printIndents(numberOfPrintedIndents);
-            this.files[file].printNameOfFile(numberOfPrintedIndents + 1);
+            if (this.files[file] != null) {
+                printIndents(numberOfPrintedIndents);
+                this.files[file].printNameOfFile(numberOfPrintedIndents + 1);
+            }
         }
     }
 
     private void printAllSubFoldersInCurrentFolder(int numberOfPrintedIndents) {
         for (int folder = 0; folder < this.subFolders.length; folder++) {
-            printIndents(numberOfPrintedIndents);
-            this.subFolders[folder].printEntireDirectory_helper(numberOfPrintedIndents + 1);
+            if (this.subFolders[folder] != null) {
+                printIndents(numberOfPrintedIndents);
+                this.subFolders[folder].printEntireDirectory_helper(numberOfPrintedIndents + 1);
+            }
         }
     }
 
@@ -140,6 +144,35 @@ public class Folder {
 
         printAllSubFoldersInCurrentFolder(0);
         printNamesOfAllFilesInCurrentFolder(0);
+
+    }
+
+    private int indexOfFoldertWithName(String nameOfSearchingFolder) {
+        int searchIndex = -1;
+
+        for (int folder = 0; folder < this.subFolders.length - 1; folder++) {
+            if (this.subFolders[folder] != null) {
+                if (this.subFolders[folder].getName() == nameOfSearchingFolder) {
+                    searchIndex = folder;
+                }
+            }
+        }
+
+        for (int subFolder = 0; subFolder < this.subFolders.length - 1; subFolder++) {
+            if (this.subFolders[subFolder] != null) {
+                this.subFolders[subFolder].removeFolder(nameOfSearchingFolder);
+            }
+        }
+
+        return searchIndex;
+    }
+
+    public void removeFolder(String nameOfFolderToRemove) {
+        int searchResult = indexOfFoldertWithName(nameOfFolderToRemove);
+
+        if (searchResult != -1) {
+            this.subFolders[searchResult] = null;
+        }
 
     }
 }
