@@ -33,7 +33,7 @@ public class GameTreeDriver {
     {
         this.chessboard.addQueenPiece(coordinateToPlace.getCol(), coordinateToPlace.getRow());
 
-        return this.chessboard.isChessboardValid();
+        return this.chessboard.isChessboardValid(coordinateToPlace);
     }
 
     public boolean bruteForceMethod(CoordinatePair coordinateToStartAt)

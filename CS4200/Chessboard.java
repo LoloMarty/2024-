@@ -7,13 +7,7 @@ public class Chessboard {
     private int chessboardWidth;
     private int chessboardHeight;
 
-    public int getChessboardWidth() {
-        return chessboardWidth;
-    }
 
-    public int getChessboardHeight() {
-        return chessboardHeight;
-    }
     
     public Chessboard(int dimX, int dimY)
     {
@@ -41,30 +35,39 @@ public class Chessboard {
         }
     }
 
-    public boolean isChessboardValid()
+    public int getChessboardWidth() {
+        return chessboardWidth;
+    }
+
+    public int getChessboardHeight() {
+        return chessboardHeight;
+    }
+    
+    public boolean isChessboardValid(CoordinatePair givenCoordinatePair)
     {
-        boolean queenFoundInColumn = false;
         boolean validityResult = true;
 
-        // for every col
-        for (int col = 0; col < chessboard.length; col++)
+        //check column
+        for(int row = 0; row<this.chessboardHeight; row++)
         {
-            // for every row
-            for(int row = 0; row < chessboard[0].length; row++)
+            if(this.isQueen(givenCoordinatePair.getCol(), row) && row != givenCoordinatePair.getRow() && validityResult != true)
             {
-                if(this.isQueen(col, row))
-                {
-                    if(queenFoundInColumn == false)
-                    {
-                        queenFoundInColumn = true;
-                    }else{
-                        validityResult = false;
-                    }
-                }
+                validityResult = false;       
             }
-
-            queenFoundInColumn = false;
         }
+        //check row
+        for(int col = 0; col<this.chessboardWidth; col++)
+        {
+            if(this.isQueen(col, givenCoordinatePair.getRow()) && col != givenCoordinatePair.getCol() && validityResult != true)
+            {
+                validityResult = false;
+            }
+        }
+        //check right-travel diagonal
+        CoordinatePair rightTravelDiagonal_StartIndex = ;
+
+        //check left-travel diagonal
+        CoordinatePair leftTravelDiagonal_StartIndex = ;
 
         return validityResult;
             
