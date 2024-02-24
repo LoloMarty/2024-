@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Folder
+{
+    - subFolders : Folder[]
+    - files : File[]
+    - name : String
+
+    + Folder()
+    + getName() : String
+    + setName(name : String) : void
+    + getSubFolders() : Folder[]
+    + setSubFolders(subFolders : Folder[]) : void
+    + getFiles() : File[]
+    + setFiles(files : File[]) : void
+    - makeNewFile(givenFileName : String) : File
+    - makeNewFolder() : Folder
+    - getLastIndex(givenFileGroup : File[]) : int
+    - getLastIndex(givenFolderGroup : Folder[]) : int
+    + addFile(givenFileNameString : String) : void
+    + addFolder(givenFolderName : String) : void
+    + addFolder(givenFolder : Folder) : void
+    - subFolderGroupSizePlusOne() : Folder[]
+    - fileGroupSizePlusOne() : File[]
+    - copyFolders(foldersToCopy : Folder[]) : Folder[]
+    - copyFiles(filesToCopy : File[]) : File[]
+    - printIndents(numberOfPrintedIndents : int) : void
+    - printNamesOfAllFilesInCurrentFolder(numberOfPrintedIndents : int) : void
+    - printAllSubFoldersInCurrentFolder(numberOfPrintedIndents : int) : void
+    + printEntireDirectory_helper(numberOfPrintedIndents : int) : void
+    + printEntireDirectory() : void
+    - indexOfFolderWithName(nameOfSearchingFolder : String) : int
+    + removeFolder(nameOfFolderToRemove : String): void
+}
+
+class File
+{
+    - name : String
+
+    + File(givenName : String)
+    + getName() : String
+    + setName(name : String) : void
+    - printIndents(numberOfPrintedIndents : int) : void
+    + printNameOfFile(numberOfPrintedIndents : int) : void
+
+}
+
+class DriverProgram
+{
+    + static main(args : String[]) : void
+}
+
+File <|-- Folder
+File <|-- DriverProgram
+Folder <|-- DriverProgram
+
+
+
+@enduml

@@ -1,0 +1,71 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Course
+{
+    - courseName : String
+    - instructor : Instructor
+    - instructor2 : Instructor
+    - textbook : Textbook
+    - textbook2 : Textbook
+
+    + Course (givenCourseName : String, givenInstructor1 : Instructor, givenInstructor2 : String, givenTextbook1 : Textbook, givenTextbook2 : Textbook)
+    + getInstructor2() : Instructor
+    + setInstructor2(instructor2 : Instructor) : void
+    + getTextbook2() : Textbook
+    + setTextbook2(textbook2 : Textbook) : void
+    + getCourseName() : String
+    + setCourseName(name : String) : void
+    + getInstructor() : Instructor
+    + setInstructor(instructor : Instructor) : void
+    + getTextbook() : Textbook
+    + setTextbook(textbook : Textbook) : void
+    + printClassInformation() : void
+}
+
+class Instructor
+{
+    - firstName : String
+    - lastName : String
+    - officeNumber : String
+
+    + Instructor(givenFirstName : String, givenLastName : String, givenOfficeNumber : String)
+    + getFirstName() : String
+    + setFirstName(firstName : String) : void
+    + getLastName() : String
+    + setLastName(lastName : String) : void
+    + getOfficeNumber() : String
+    + setOfficeNumber(officeNumber : String) : void
+}
+
+Class Textbook
+{
+    - title : String
+    - author : String
+    - publisher : String
+
+    + Textbook(givenTitle : String, givenAuthor : String, givenPublisher : String)
+    + getTitle() : String
+    + setTitle(title : String) : void
+    + getAuthor() : String
+    + setAuthor(author : String) : void
+    + getPublisher() : String
+    + setPublisher(publisher : String) : void
+}
+
+Class DriverProgram
+{
+    + static main(args : String[]) : void
+
+}
+
+Instructor <|-- Course
+Textbook <|-- Course
+Instructor <|-- DriverProgram
+Textbook <|-- DriverProgram
+Instructor <|-- DriverProgram
+
+
+
+
+@enduml

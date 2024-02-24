@@ -1,0 +1,52 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Ship
+{
+    - name : String
+    - yearBuilt : String
+
+    + Ship(givenName : String, givenYearBuilt : String)
+    + getName() : String
+    + setName(name : String) : void
+    + getYearBuilt() : String
+    + setYearBuild(yearBuilt : String) : void
+    + printShipDetails() : void
+    + static main(args : String[]) : void
+}
+
+
+class CargoShip
+{
+    - cargoCapacity_InTons : int
+    + CargoShip (givenName : String, givenYearBuilt : String, givenCargoCapacity_InTons : int)
+    + getCargoCapacity_InTons() : int
+    + setCargoCapacity_InTons(cargoCapacity_InTons : int) : void
+    + printShipDetails() : void
+}
+
+class CruiseShip
+{
+    - maximumPassengers : int
+    + CruiseShip(givenName : String, givenBuildYear : String, givenMaxPassengers : int)
+    + getMaximumPassengers() : int
+    + setMaximumPassengers(maximumPassengers : int) : void
+    + printShipDetails() : void
+    + static main(args : String[]) : void
+}
+
+class DriverProgram
+{
+    + static main(args : String[]) : void
+}
+
+
+Ship <|-- CargoShip
+Ship <|-- CruiseShip
+CargoShip <|-- DriverProgram
+CruiseShip <|-- DriverProgram
+Ship <|-- DriverProgram
+
+
+
+@enduml
