@@ -2,6 +2,47 @@ package CS4200;
 
 //  Array[Col][Row]
 
+/*
+
+
+0 0 0 6 0 0 
+0 0 0 0 0 0
+5 0 4 1 0 0
+0 0 0 0 0 3
+0 0 2 0 0 0
+0 0 0 0 0 0
+
+[row][col]
+
+RIGHT TO BOT LEFT
+
+1: [2][3]	Diag: [][]
+
+2: [4][2]	Diag: [][]
+
+3: [3][5]	Diag: [][]
+
+4: [2][2]	Diag: [][] 
+
+Diagonal={(x,y)∣x,y∈R,if x>y then (∣x−y∣,0), else if y>x then (0,∣x−y∣)}
+
+
+LEFT TO BOT RIGHT 
+
+1: [2][3]	Diag: [][]
+
+2: [4][2]	Diag: [][]
+
+3: [3][5]	Diag: [][]
+
+4: [2][2]	Diag: [][]
+
+5: [2][0]	Diag: [][]
+
+6: [0][3]	Diag: [][]
+
+ */
+
 public class Chessboard {
     private int[][] chessboard;
     private int chessboardWidth;
@@ -43,6 +84,27 @@ public class Chessboard {
         return chessboardHeight;
     }
     
+    public CoordinatePair calculateRightHandDiagonalIntercept(CoordinatePair pointToEvaluate)
+    {
+        int y = pointToEvaluate.getCol();
+        int x = pointToEvaluate.getRow();
+        
+
+        return pairToReturn;
+    }
+
+    public CoordinatePair calculateLeftHandDiagonalIntercept(CoordinatePair pointToEvaluate)
+    {
+        int y = pointToEvaluate.getCol();
+        int x = pointToEvaluate.getRow();
+        CoordinatePair pairToReturn = new CoordinatePair(5, 5); 
+
+
+        
+        
+        return pairToReturn;
+    }
+
     public boolean isChessboardValid(CoordinatePair givenCoordinatePair)
     {
         boolean validityResult = true;
@@ -64,7 +126,7 @@ public class Chessboard {
             }
         }
         //check right-travel diagonal
-        CoordinatePair rightTravelDiagonal_StartIndex = ;
+        CoordinatePair rightTravelDiagonal_StartIndex = calculateRightHandDiagonalIntercept(givenCoordinatePair);
 
         //check left-travel diagonal
         CoordinatePair leftTravelDiagonal_StartIndex = ;
