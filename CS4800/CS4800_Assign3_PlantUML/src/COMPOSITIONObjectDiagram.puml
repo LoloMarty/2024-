@@ -1,0 +1,59 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+object "<u>File</u>" as subFi_htaccess{
+    name = ".htaccess"
+}
+
+object "<u>File</u>" as subFi_htrouter{
+    name = ".htrouter.php"
+}
+
+object "<u>File</u>" as subFi_index{
+    name = "index.html"
+}
+
+
+
+object "<u>Folder</u>" as phaF{
+    name = ".phalcon"
+}
+object "<u>Folder</u>" as cchF{
+    name = "cache"
+}
+object "<u>Folder</u>" as pubF{
+    name = "public"
+}
+
+
+
+object "<u>Folder</u>" as srcF{
+    name = "Source Files"
+}
+
+object "<u>Folder</u>" as incP{
+    name = "Include Path"
+}
+
+object "<u>Folder</u>" as remF{
+    name = "Remote Files"
+}
+
+object "<u>demo1_Folder : Folder</u>" as demF{
+    name = "demo1"
+}
+
+srcF *-- subFi_htaccess
+srcF *-- subFi_htrouter
+srcF *-- subFi_index
+
+srcF *-- phaF
+srcF *-- cchF
+srcF *-- pubF
+
+
+demF *-- srcF
+demF *-- incP
+demF *-- remF
+
+@enduml

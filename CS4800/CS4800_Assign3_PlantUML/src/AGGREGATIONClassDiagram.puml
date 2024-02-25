@@ -9,7 +9,7 @@ class Course
     - textbook : Textbook
     - textbook2 : Textbook
 
-    + Course (givenCourseName : String, givenInstructor1 : Instructor, givenInstructor2 : String, givenTextbook1 : Textbook, givenTextbook2 : Textbook)
+    + Course (givenCourseName : String, givenInstructor1 : Instructor, givenInstructor2 : Instructor, givenTextbook1 : Textbook, givenTextbook2 : Textbook)
     + getInstructor2() : Instructor
     + setInstructor2(instructor2 : Instructor) : void
     + getTextbook2() : Textbook
@@ -59,11 +59,12 @@ Class DriverProgram
 
 }
 
-Instructor <|-- Course
-Textbook <|-- Course
-Instructor <|-- DriverProgram
-Textbook <|-- DriverProgram
-Instructor <|-- DriverProgram
+Instructor "1..2" o-- Course
+Textbook "1..2" o-- Course
+
+Instructor "0..*" <--> "1"DriverProgram
+Textbook "0..*" <--> "1" DriverProgram
+Instructor "0..*" <--> "1" DriverProgram
 
 
 

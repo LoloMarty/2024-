@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+object "<u>instructor : Instructor</u>" as instr{
+    firstName = "Nima"
+    lastName = "Davarpanah"
+    officeNumber = "3-2636"
+}
+
+object "<u>textbook : Textbook</u>" as txtBk{
+    author = "Robert C. Martin"
+    publisher = "Lighthouse Books"
+    title = "Clean Code"
+}
+
+object "<u>course : Course</u>" as crs{
+    courseName = "Software Engineering"
+}
+
+crs o-- instr
+crs o-- txtBk
+
+@enduml

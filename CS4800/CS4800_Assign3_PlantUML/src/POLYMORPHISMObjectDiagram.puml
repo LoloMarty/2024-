@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+object "<u>normalShip : Ship</u>" as norS{
+    name = "Maria Ave"
+    yearBuilt = "2002"
+}
+
+object "<u>cruiseShip : CruiseShip</u>" as cruS{
+    maximumPassengers = 3000
+    name = "Balaegyr"
+    yearBuilt = "1985"
+}
+
+object "<u>cargoShip : CargoShip</u>" as carS{
+    cargoCapacity_InTons  = 600
+    name : "Coastal Packer"
+    yearBuilt : 2018
+}
+
+object "<u>fleet : Ship[]</u>" as flt{
+}
+
+flt o-- norS
+flt o-- cruS
+flt o-- carS
+
+
+@enduml

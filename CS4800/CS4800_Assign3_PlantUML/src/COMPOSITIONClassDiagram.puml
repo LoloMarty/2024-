@@ -51,9 +51,9 @@ class DriverProgram
     + static main(args : String[]) : void
 }
 
-File <|-- Folder
-File <|-- DriverProgram
-Folder <|-- DriverProgram
+File " 0..* " <--> "1" Folder
+Folder "1 Parent Folder" <--> "   0..* Sub Folders" Folder
+Folder "1   " <--> "    1" DriverProgram
 
 
 

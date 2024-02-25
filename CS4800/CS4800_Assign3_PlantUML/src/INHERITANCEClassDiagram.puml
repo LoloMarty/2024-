@@ -4,7 +4,7 @@
 class Employee
 {
     - firstName : String
-    - lastname : String
+    - lastName : String
     - socialSecurityNumber : int
 
     + Employee(givenFirstName : String, givenLastName : String, givenSocialSecurityNumber : int)
@@ -20,6 +20,7 @@ class HourlyEmployee
 {
     - wage : int
     - hoursWorked : int
+
     + HourlyEmployee (givenFirstName : String, givenLastName : String, givenSocialSecurityNumber : int, givenWage : int, givenHoursWorked : int)
     + setWage(newWage : int) : void
     + getEmployeeWage() : int
@@ -31,7 +32,7 @@ class SalariedEmployee
 {
     - weeklySalary : int
 
-    + SalariedEmployee(givenFirstName : String, givenLastName : String, givenSocialSecurityNumber : String, givenWeeklySalary : int)
+    + SalariedEmployee(givenFirstName : String, givenLastName : String, givenSocialSecurityNumber : int, givenWeeklySalary : int)
     + setWeeklySalary(newWeeklySalary : int) : void
     + getWeeklySalary() : int
 }
@@ -40,6 +41,7 @@ class CommisionEmployee
 {
     - commisionRate : int
     - grossSales : int
+
     + CommisionEmployee(givenFirstName : String, givenLastName : String, givenSocialSecurityNumber : int, givenCommisionRate : int, givenGrossSales : int)
     + setCommisionRate(newCommisionRate : int) : void
     + getCommisionRate() : int
@@ -50,6 +52,7 @@ class CommisionEmployee
 class BaseEmployee
 {
     - baseSalary : int
+
     + BaseEmployee(givenFirstName : String, givenLastName : String, givenSocialSecurityNumber : int, givenBaseSalary: int)
     + setBaseSalary(newBaseSalary : int) : void
     + getBaseSalary() : int
@@ -58,13 +61,13 @@ class BaseEmployee
 class DriverProgram
 {
     + DriverProgram (firstEmployee : Employee)
-    + static main (args : String[]) : void
     - convertIntToFormattedSSN(givenSocialSecurityNumber : int) : String
     - printEmployeeInformationTableHeader_Inline() : void
     - printSalariedEmployeeInformation_Inline(employeeInfoToPrint : SalariedEmployee) : void
     - printHourlyEmployeeInformation_Inline(employeeInfoToPrint : HourlyEmployee) : void
     - printCommisionEmployeeInformation_Inline(employeeInfoToPrint : CommisionEmployee) : void
     - printBaseEmployeeInformation_Inline(employeeInfoToPrint : BaseEmployee) : void
+    + static main (args : String[]) : void
 }
 
 Employee <|-- BaseEmployee
@@ -72,9 +75,9 @@ Employee <|-- CommisionEmployee
 Employee <|-- SalariedEmployee
 Employee <|-- HourlyEmployee
 
-BaseEmployee <|-- DriverProgram
-CommisionEmployee <|-- DriverProgram
-SalariedEmployee <|-- DriverProgram
-HourlyEmployee <|-- DriverProgram
+BaseEmployee "0..*" <--> "1"DriverProgram
+CommisionEmployee "0..*" <--> "1" DriverProgram
+SalariedEmployee "0..*" <--> "1" DriverProgram
+HourlyEmployee "0..*" <--> "1" DriverProgram
 
 @enduml
