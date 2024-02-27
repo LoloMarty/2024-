@@ -2,53 +2,18 @@ package CS4200;
 
 //  Array[Col][Row]
 
-/*
-
-
-0 0 0 6 0 0 
-0 0 0 0 0 0
-5 0 4 1 0 0
-0 0 0 0 0 3
-0 0 2 0 0 0
-0 0 0 0 0 0
-
-[row][col]
-
-RIGHT TO BOT LEFT
-
-1: [2][3]	Diag: [][]
-
-2: [4][2]	Diag: [][]
-
-3: [3][5]	Diag: [][]
-
-4: [2][2]	Diag: [][] 
-
-Diagonal={(x,y)∣x,y∈R,if x>y then (∣x−y∣,0), else if y>x then (0,∣x−y∣)}
-
-
-LEFT TO BOT RIGHT 
-
-1: [2][3]	Diag: [][]
-
-2: [4][2]	Diag: [][]
-
-3: [3][5]	Diag: [][]
-
-4: [2][2]	Diag: [][]
-
-5: [2][0]	Diag: [][]
-
-6: [0][3]	Diag: [][]
-
- */
-
 public class Chessboard {
     private int[][] chessboard;
     private int chessboardWidth;
     private int chessboardHeight;
 
+    public int getChessboardWidth() {
+        return chessboardWidth;
+    }
 
+    public int getChessboardHeight() {
+        return chessboardHeight;
+    }
     
     public Chessboard(int dimX, int dimY)
     {
@@ -76,60 +41,61 @@ public class Chessboard {
         }
     }
 
-    public int getChessboardWidth() {
-        return chessboardWidth;
-    }
-
-    public int getChessboardHeight() {
-        return chessboardHeight;
-    }
-    
-    public CoordinatePair calculateRightHandDiagonalIntercept(CoordinatePair pointToEvaluate)
-    {
-        int y = pointToEvaluate.getCol();
-        int x = pointToEvaluate.getRow();
-        
-
-        return pairToReturn;
-    }
-
-    public CoordinatePair calculateLeftHandDiagonalIntercept(CoordinatePair pointToEvaluate)
-    {
-        int y = pointToEvaluate.getCol();
-        int x = pointToEvaluate.getRow();
-        CoordinatePair pairToReturn = new CoordinatePair(5, 5); 
-
-
-        
-        
-        return pairToReturn;
-    }
-
-    public boolean isChessboardValid(CoordinatePair givenCoordinatePair)
+    public boolean isChessboardValid(CoordinatePair currentMove)
     {
         boolean validityResult = true;
 
-        //check column
-        for(int row = 0; row<this.chessboardHeight; row++)
+        //check col
+        for(int index = 0; index < this.getChessboardHeight(); index++)
         {
-            if(this.isQueen(givenCoordinatePair.getCol(), row) && row != givenCoordinatePair.getRow() && validityResult != true)
-            {
-                validityResult = false;       
-            }
-        }
-        //check row
-        for(int col = 0; col<this.chessboardWidth; col++)
-        {
-            if(this.isQueen(col, givenCoordinatePair.getRow()) && col != givenCoordinatePair.getCol() && validityResult != true)
+            if(this.isQueen(currentMove.getCol(), index) && index != currentMove.getRow())
             {
                 validityResult = false;
             }
         }
-        //check right-travel diagonal
-        CoordinatePair rightTravelDiagonal_StartIndex = calculateRightHandDiagonalIntercept(givenCoordinatePair);
 
-        //check left-travel diagonal
-        CoordinatePair leftTravelDiagonal_StartIndex = ;
+        //check row
+        for(int index = 0; index < this.getChessboardWidth(); index++)
+        {
+            if(this.isQueen(index, currentMove.getRow()) && index != currentMove.getCol())
+            {
+                validityResult = false;
+            }
+        }
+        
+        //checkTopLeftToBotRight
+        for (int index = 1; currentMove.getCol() - index >= 0 && currentMove.getRow() - index >= 0; index++)
+        {
+            if(this.isQueen(currentMove.getCol() - index, currentMove.getRow() - index))
+            {
+                validityResult = false;
+            }
+        }
+
+        for (int index = 1; currentMove.getCol() + index <= this.getChessboardWidth()-1 && currentMove.getRow() + index <= this.getChessboardHeight()-1; index++)
+        {
+            if(this.isQueen(currentMove.getCol() + index, currentMove.getRow() + index))
+            {
+                validityResult = false;
+            }
+        }
+
+        //checkTopRightToBotLeft
+        for (int index = 1; currentMove.getCol() + index <= this.getChessboardWidth()-1 && currentMove.getRow() - index >= 0; index++)
+        {
+            if(this.isQueen(currentMove.getCol() + index, currentMove.getRow() - index))
+            {
+                validityResult = false;
+            }
+        }
+
+        for(int index = 1; currentMove.getCol() - index >= 0 && currentMove.getRow() + index <= this.getChessboardHeight()-1; index++)
+        {
+            if(this.isQueen(currentMove.getCol() - index, currentMove.getRow() + index))
+            {
+                validityResult = false;
+            }
+        }
 
         return validityResult;
             
