@@ -32,9 +32,9 @@ public class Chessboard {
             {
                 if(isQueen(col, row))
                 {
-                    System.out.printf("[X]  ");
+                    System.out.printf("[X] ");
                 }else{
-                    System.out.printf("[ ]  ");
+                    System.out.printf("[ ] ");
                 }
             }
             System.out.println();
