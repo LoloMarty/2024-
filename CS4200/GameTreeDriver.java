@@ -36,7 +36,7 @@ public class GameTreeDriver {
         return this.chessboard.isChessboardValid(coordinateToPlace);
     }
 
-    public boolean bruteForceMethod(CoordinatePair coordinateToStartAt)
+    public void bruteForceMethod(CoordinatePair coordinateToStartAt)
     {
         boolean treeProgressionSuccess = false;
 
@@ -51,16 +51,14 @@ public class GameTreeDriver {
             {
                 treeProgressionSuccess = true;
                 bruteForceMethod(new CoordinatePair(col, coordinateToStartAt.getRow()+1));
+                this.chessboard.removeQueenPiece(col, coordinateToStartAt.getRow()+1);
             }
         }else{
             treeProgressionSuccess = false;
             this.chessboard.removeQueenPiece(openSpot.getCol(), openSpot.getRow());
-            
         }
-
-        return treeProgressionSuccess;
-        
     }
+
 
     public static void main(String[] args)
     {
