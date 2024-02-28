@@ -6,6 +6,7 @@ public class Chessboard {
     private int[][] chessboard;
     private int chessboardWidth;
     private int chessboardHeight;
+    private int printTracker; 
 
     public int getChessboardWidth() {
         return chessboardWidth;
@@ -20,10 +21,13 @@ public class Chessboard {
         this.chessboardWidth = dimX;
         this.chessboardHeight = dimY;
         this.chessboard = new int[dimX][dimY];
+        this.printTracker = 0;
     }
 
     public void printChessboardOnConsole()
     {
+        printTracker++;
+        System.out.printf("\nMove #%d", this.printTracker);
         System.out.println();
 
         for(int row = 0; row < chessboard[0].length; row++)
