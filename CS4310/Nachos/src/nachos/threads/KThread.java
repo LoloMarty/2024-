@@ -190,7 +190,7 @@ public class KThread {
 
 	Lib.assertTrue(toBeDestroyed == null);
 	
-	//wake all the threads in the t2 waitQueue
+	//wake all the threads in the waitQueue
 	waitConditionalVariable.wakeAll();
 	
 	toBeDestroyed = currentThread;
@@ -280,7 +280,7 @@ public class KThread {
 	
 		Lib.assertTrue(this != currentThread);
 		
-		//put t1 (current) to sleep in t2's wait queue 
+		//put current thread to sleep in wait queue, will be woken by finished process
 		waitConditionalVariable.sleep();
 		
     }
