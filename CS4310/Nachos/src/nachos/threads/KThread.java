@@ -189,8 +189,11 @@ public class KThread {
 	Machine.autoGrader().finishingCurrentThread();
 
 	Lib.assertTrue(toBeDestroyed == null);
+	
+	//wake all the threads in the t2 waitQueue
+	waitConditionalVariable.wakeAll();
+	
 	toBeDestroyed = currentThread;
-
 
 	currentThread.status = statusFinished;
 	
@@ -273,10 +276,13 @@ public class KThread {
      * thread.
      */
     public void join() {
-	Lib.debug(dbgThread, "Joining to thread: " + toString());
-
-	Lib.assertTrue(this != currentThread);
-
+		Lib.debug(dbgThread, "Joining to thread: " + toString());
+	
+		Lib.assertTrue(this != currentThread);
+		
+		//put t1 (current) to sleep in t2's wait queue 
+		waitConditionalVariable.sleep();
+		
     }
 
     /**
@@ -444,4 +450,5 @@ public class KThread {
     private static KThread currentThread = null;
     private static KThread toBeDestroyed = null;
     private static KThread idleThread = null;
+    private static Condition2 waitConditionalVariable = null;
 }
