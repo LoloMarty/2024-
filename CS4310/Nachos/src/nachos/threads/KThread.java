@@ -248,6 +248,8 @@ public class KThread {
 
 	if (currentThread.status != statusFinished)
 	    currentThread.status = statusBlocked;
+	
+	waitConditionalVariable.sleep();
 
 	runNextThread();
     }

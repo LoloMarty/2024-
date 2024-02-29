@@ -35,19 +35,22 @@ public class Condition2 {
     public void sleep() {
     	//check the current thread is holding the lock
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-	
-		conditionLock.release();
-		
 		//record the interrupt's last state 
 		boolean intStatus = Machine.interrupt().disable();
 		//add the current thread to the wait queue
 		waitQueue.add(KThread.currentThread());
+		
+		conditionLock.release();
+		
 		//put the thread to sleep, will wake later
 		KThread.sleep();
+		
+		conditionLock.acquire();
+		
 		//restore interrupt capability
 		Machine.interrupt().restore(intStatus);
 		
-		conditionLock.acquire();
+		
     }
 
     /**
