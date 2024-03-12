@@ -1,0 +1,37 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "CUDA C++: Launch",
+      "type": "cuda-gdb",
+      "request": "launch",
+      "program": ""
+    },
+    {
+      "type": "java",
+      "name": "GameTreeDriver",
+      "request": "launch",
+      "mainClass": "CS4200.GameTreeDriver",
+      "projectName": "2024-_798299be"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/Raini/Downloads/TemporaryStuff/2024-/CS4990",
+      "program": "c:/Users/Raini/Downloads/TemporaryStuff/2024-/CS4990/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
