@@ -1,5 +1,5 @@
 package AbstractFactory;
 
-public class NoRestriction_DietPlan extends DietPlan {
+public class NoRestrictionDietPlan extends DietPlan {
 
 }

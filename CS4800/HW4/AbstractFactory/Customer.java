@@ -19,5 +19,4 @@ public class Customer {
     public void setPlan(DietPlan plan) {
         this.plan = plan;
     }
-
 }

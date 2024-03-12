@@ -1,5 +1,5 @@
 package AbstractFactory;
 
-public class Vegan_DietPlan extends DietPlan {
+public class VeganDietPlan extends DietPlan {
 
 }
