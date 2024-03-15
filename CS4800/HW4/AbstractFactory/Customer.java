@@ -2,21 +2,24 @@ package AbstractFactory;
 
 public class Customer {
     private String name;
-    private DietPlan plan;
+    private String dietType;
+    private Plan dietPlan;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Customer(String name, String dietType) {
         this.name = name;
+        this.dietType = dietType;
+        this.dietPlan = new Plan();
     }
 
-    public DietPlan getPlan() {
-        return plan;
-    }
+    public Meal getMeal() {
+        Meal meal = this.dietPlan.getMeal(dietType);
 
-    public void setPlan(DietPlan plan) {
-        this.plan = plan;
+        System.out.printf("\n\nName: %s", this.name);
+        System.out.printf("\nDiet Type: %s", this.dietType);
+        System.out.printf("\nCarb: %s", meal.getCarb());
+        System.out.printf("\nProtein: %s", meal.getProtein());
+        System.out.printf("\nFat: %s", meal.getFat());
+
+        return meal;
     }
 }
