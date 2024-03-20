@@ -2,6 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "DriverProgram",
+      "request": "launch",
+      "mainClass": "Builder.DriverProgram",
+      "projectName": "2024-_798299be"
+    },
+    {
+      "type": "java",
+      "name": "DriverProgram",
+      "request": "launch",
+      "mainClass": "AbstractFactory.DriverProgram",
+      "projectName": "2024-_798299be"
+    },
+    {
       "name": "CUDA C++: Launch",
       "type": "cuda-gdb",
       "request": "launch",
