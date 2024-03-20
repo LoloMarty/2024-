@@ -38,7 +38,7 @@ public class Condition2 {
 		//record the interrupt's last state 
 		boolean intStatus = Machine.interrupt().disable();
 		//add the current thread to the wait queue
-		waitQueue.add(KThread.currentThread());
+		waitQueue.waitForAccess(KThread.currentThread());
 		
 		conditionLock.release();
 		
@@ -60,11 +60,10 @@ public class Condition2 {
     public void wake() {
     	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 	
-    	if (waitQueue.isEmpty() == false){
     		//save interrupt status to restore later 
     		boolean intStatus = Machine.interrupt().disable();
     		//get first thread in queue
-    		KThread thread = waitQueue.removeFirst();
+    		KThread thread = waitQueue.nextThread();
     		
     		//need to check if the thread is null
     		if (thread != null){
@@ -72,7 +71,6 @@ public class Condition2 {
     		}
     		//restore interrupt status
     		Machine.interrupt().restore(intStatus);
-    	}
     }
 
     /**
@@ -82,12 +80,19 @@ public class Condition2 {
     public void wakeAll() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 		
+		boolean intStatus = Machine.interrupt().disable();
+		
+		KThread thread = waitQueue.nextThread();
+		
 		//iterate through all threads in the queue and wake them
-		while(!waitQueue.isEmpty()){
-			wake();
+		while(thread != null){
+			thread.ready();
+			thread = waitQueue.nextThread();
 		}
+		
+		Machine.interrupt().restore(intStatus);
     }
 
     private Lock conditionLock;
-    private LinkedList<KThread> waitQueue;
+    private ThreadQueue waitQueue = ThreadedKernel.scheduler.newThreadQueue(true);
 }

@@ -37,7 +37,7 @@ public class Lock {
 	KThread thread = KThread.currentThread();
 
 	if (lockHolder != null) {
-	    waitQueue.waitForAccess(thread);
+	    waitQueue.waitForAccess(thread);	//where priority donation should happen
 	    KThread.sleep();
 	}
 	else {

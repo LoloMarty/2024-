@@ -182,22 +182,24 @@ public class KThread {
      * delete this thread.
      */
     public static void finish() {
-	Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
+		Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
+		
+		Machine.interrupt().disable();
 	
-	Machine.interrupt().disable();
-
-	Machine.autoGrader().finishingCurrentThread();
-
-	Lib.assertTrue(toBeDestroyed == null);
+		Machine.autoGrader().finishingCurrentThread();
 	
-	//wake all the threads in the waitQueue
-	waitConditionalVariable.wakeAll();
+		Lib.assertTrue(toBeDestroyed == null);
+		
+		toBeDestroyed = currentThread;
 	
-	toBeDestroyed = currentThread;
-
-	currentThread.status = statusFinished;
-	
-	sleep();
+		currentThread.status = statusFinished;
+		
+		currentThread.lock.acquire();
+		currentThread.waitCond.wakeAll();
+		currentThread.lock.release();
+		
+		
+		sleep();
     }
 
     /**
@@ -242,16 +244,14 @@ public class KThread {
      * scheduled this thread to be destroyed by the next thread to run.
      */
     public static void sleep() {
-	Lib.debug(dbgThread, "Sleeping thread: " + currentThread.toString());
+		Lib.debug(dbgThread, "Sleeping thread: " + currentThread.toString());
+		
+		Lib.assertTrue(Machine.interrupt().disabled());
 	
-	Lib.assertTrue(Machine.interrupt().disabled());
-
-	if (currentThread.status != statusFinished)
-	    currentThread.status = statusBlocked;
-	
-	waitConditionalVariable.sleep();
-
-	runNextThread();
+		if (currentThread.status != statusFinished)
+		    currentThread.status = statusBlocked;
+		
+		runNextThread();
     }
 
     /**
@@ -282,9 +282,10 @@ public class KThread {
 	
 		Lib.assertTrue(this != currentThread);
 		
+		lock.acquire();
 		//put current thread to sleep in wait queue, will be woken by finished process
-		waitConditionalVariable.sleep();
-		
+		waitCond.sleep();
+		lock.release();
     }
 
     /**
@@ -342,6 +343,7 @@ public class KThread {
      *				thread.
      */
     private void run() {
+    	
 	Lib.assertTrue(Machine.interrupt().disabled());
 
 	Machine.yield();
@@ -452,5 +454,6 @@ public class KThread {
     private static KThread currentThread = null;
     private static KThread toBeDestroyed = null;
     private static KThread idleThread = null;
-    private static Condition2 waitConditionalVariable = null;
+    private Lock lock = new Lock();
+    private Condition2 waitCond = new Condition2(lock);
 }
