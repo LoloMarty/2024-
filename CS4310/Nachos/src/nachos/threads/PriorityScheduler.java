@@ -3,6 +3,7 @@ package nachos.threads;
 import nachos.machine.*;
 
 import java.util.TreeSet;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -27,10 +28,13 @@ import java.util.Iterator;
  * particular, priority must be donated through locks, and through joins.
  */
 public class PriorityScheduler extends Scheduler {
+	private java.util.PriorityQueue<KThread> pq = new java.util.PriorityQueue<KThread>(new KTComparator());
+	
     /**
      * Allocate a new priority scheduler.
      */
     public PriorityScheduler() {
+    	
     }
     
     /**
@@ -126,24 +130,29 @@ public class PriorityScheduler extends Scheduler {
      * A <tt>ThreadQueue</tt> that sorts threads by priority.
      */
     protected class PriorityQueue extends ThreadQueue {
+    	private java.util.PriorityQueue<KThread> pq = new java.util.PriorityQueue<KThread>(new KTComparator());
+    	private ThreadState owner = null;
+    	
 	PriorityQueue(boolean transferPriority) {
 	    this.transferPriority = transferPriority;
 	}
 
 	public void waitForAccess(KThread thread) {
 	    Lib.assertTrue(Machine.interrupt().disabled());
+	    pq.add(thread);
 	    getThreadState(thread).waitForAccess(this);
 	}
 
 	public void acquire(KThread thread) {
 	    Lib.assertTrue(Machine.interrupt().disabled());
+	    owner = getThreadState(thread);
 	    getThreadState(thread).acquire(this);
 	}
 
 	public KThread nextThread() {
 	    Lib.assertTrue(Machine.interrupt().disabled());
-	    // implement me
-	    return null;
+	    
+	    return pq.poll();
 	}
 
 	/**
@@ -154,8 +163,7 @@ public class PriorityScheduler extends Scheduler {
 	 *		return.
 	 */
 	protected ThreadState pickNextThread() {
-	    // implement me
-	    return null;
+	    return getThreadState(pq.peek());
 	}
 	
 	public void print() {
@@ -169,6 +177,12 @@ public class PriorityScheduler extends Scheduler {
 	 */
 	public boolean transferPriority;
     }
+    
+    private class KTComparator implements Comparator<KThread> {
+        public int compare(KThread kt1, KThread kt2){
+          return getThreadState(kt2).getEffectivePriority() - getThreadState(kt1).getEffectivePriority();
+       }
+    } 
 
     /**
      * The scheduling state of a thread. This should include the thread's
@@ -236,7 +250,7 @@ public class PriorityScheduler extends Scheduler {
 	 * @see	nachos.threads.ThreadQueue#waitForAccess
 	 */
 	public void waitForAccess(PriorityQueue waitQueue) {
-	    // implement me
+	    this.waitingFor = waitQueue;
 	}
 
 	/**
@@ -252,10 +266,14 @@ public class PriorityScheduler extends Scheduler {
 	public void acquire(PriorityQueue waitQueue) {
 	    // implement me
 	}	
+	
+	
+	private int effectivePriority;	//what you should cache when priority is donated ; EFFECTIVE: the number used in the schedule 
 
 	/** The thread with which this object is associated. */	   
 	protected KThread thread;
 	/** The priority of the associated thread. */
-	protected int priority;
+	protected int priority;			// the original priority, given to the thread when it was created
+	private PriorityQueue waitingFor;
     }
 }
