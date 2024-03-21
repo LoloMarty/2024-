@@ -193,87 +193,101 @@ public class PriorityScheduler extends Scheduler {
      */
     protected class ThreadState {
 	/**
-	 * Allocate a new <tt>ThreadState</tt> object and associate it with the
-	 * specified thread.
-	 *
-	 * @param	thread	the thread this state belongs to.
-	 */
-	public ThreadState(KThread thread) {
-	    this.thread = thread;
-	    
-	    setPriority(priorityDefault);
-	}
-
-	/**
-	 * Return the priority of the associated thread.
-	 *
-	 * @return	the priority of the associated thread.
-	 */
-	public int getPriority() {
-	    return priority;
-	}
-
-	/**
-	 * Return the effective priority of the associated thread.
-	 *
-	 * @return	the effective priority of the associated thread.
-	 */
-	public int getEffectivePriority() {
-	    // implement me
-	    return priority;
-	}
-
-	/**
-	 * Set the priority of the associated thread to the specified value.
-	 *
-	 * @param	priority	the new priority.
-	 */
-	public void setPriority(int priority) {
-	    if (this.priority == priority)
-		return;
-	    
-	    this.priority = priority;
-	    
-	    // implement me
-	}
-
-	/**
-	 * Called when <tt>waitForAccess(thread)</tt> (where <tt>thread</tt> is
-	 * the associated thread) is invoked on the specified priority queue.
-	 * The associated thread is therefore waiting for access to the
-	 * resource guarded by <tt>waitQueue</tt>. This method is only called
-	 * if the associated thread cannot immediately obtain access.
-	 *
-	 * @param	waitQueue	the queue that the associated thread is
-	 *				now waiting on.
-	 *
-	 * @see	nachos.threads.ThreadQueue#waitForAccess
-	 */
-	public void waitForAccess(PriorityQueue waitQueue) {
-	    this.waitingFor = waitQueue;
-	}
-
-	/**
-	 * Called when the associated thread has acquired access to whatever is
-	 * guarded by <tt>waitQueue</tt>. This can occur either as a result of
-	 * <tt>acquire(thread)</tt> being invoked on <tt>waitQueue</tt> (where
-	 * <tt>thread</tt> is the associated thread), or as a result of
-	 * <tt>nextThread()</tt> being invoked on <tt>waitQueue</tt>.
-	 *
-	 * @see	nachos.threads.ThreadQueue#acquire
-	 * @see	nachos.threads.ThreadQueue#nextThread
-	 */
-	public void acquire(PriorityQueue waitQueue) {
-	    // implement me
-	}	
+		 * Allocate a new <tt>ThreadState</tt> object and associate it with the
+		 * specified thread.
+		 *
+		 * @param	thread	the thread this state belongs to.
+		 */
+		public ThreadState(KThread thread) {
+		    this.thread = thread;
+		    
+		    setPriority(priorityDefault);
+		}
 	
+		/**
+		 * Return the priority of the associated thread.
+		 *
+		 * @return	the priority of the associated thread.
+		 */
+		public int getPriority() {
+		    return priority;
+		}
 	
-	private int effectivePriority;	//what you should cache when priority is donated ; EFFECTIVE: the number used in the schedule 
-
-	/** The thread with which this object is associated. */	   
-	protected KThread thread;
-	/** The priority of the associated thread. */
-	protected int priority;			// the original priority, given to the thread when it was created
-	private PriorityQueue waitingFor;
-    }
+		/**
+		 * Return the effective priority of the associated thread.
+		 *
+		 * @return	the effective priority of the associated thread.
+		 */
+		public int getEffectivePriority() {
+		    // implement me
+		    return priority;
+		    
+		    /* In whatever data structure effectivePriority is in,
+		     * get the last known priority of the thread 
+		     * */
+		}
+	
+		/**
+		 * Set the priority of the associated thread to the specified value.
+		 *
+		 * @param	priority	the new priority.
+		 */
+		public void setPriority(int priority) {
+		    if (this.priority == priority)
+			return;
+		    
+		    this.priority = priority;
+		    
+		    // implement me
+		    
+		    /* In whatever data structure effectivePriority is in,
+		     * add this new priority to the top of it so that it is 
+		     * recognized as the current priority
+		     * */
+		}
+	
+		/**
+		 * Called when <tt>waitForAccess(thread)</tt> (where <tt>thread</tt> is
+		 * the associated thread) is invoked on the specified priority queue.
+		 * The associated thread is therefore waiting for access to the
+		 * resource guarded by <tt>waitQueue</tt>. This method is only called
+		 * if the associated thread cannot immediately obtain access.
+		 *
+		 * @param	waitQueue	the queue that the associated thread is
+		 *				now waiting on.
+		 *
+		 * @see	nachos.threads.ThreadQueue#waitForAccess
+		 */
+		public void waitForAccess(PriorityQueue waitQueue) {
+		    this.waitingFor = waitQueue;
+		}
+	
+		/**
+		 * Called when the associated thread has acquired access to whatever is
+		 * guarded by <tt>waitQueue</tt>. This can occur either as a result of
+		 * <tt>acquire(thread)</tt> being invoked on <tt>waitQueue</tt> (where
+		 * <tt>thread</tt> is the associated thread), or as a result of
+		 * <tt>nextThread()</tt> being invoked on <tt>waitQueue</tt>.
+		 *
+		 * @see	nachos.threads.ThreadQueue#acquire
+		 * @see	nachos.threads.ThreadQueue#nextThread
+		 */
+		public void acquire(PriorityQueue waitQueue) {
+		    // implement me
+			
+			/*
+			 * 
+			 * */
+			
+		}	
+		
+		
+		private int effectivePriority;	//what you should cache when priority is donated ; EFFECTIVE: the number used in the schedule 
+	
+		/** The thread with which this object is associated. */	   
+		protected KThread thread;
+		/** The priority of the associated thread. */
+		protected int priority;			// the original priority, given to the thread when it was created
+		private PriorityQueue waitingFor;
+	    }
 }
