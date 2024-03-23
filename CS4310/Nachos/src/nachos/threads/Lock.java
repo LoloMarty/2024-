@@ -53,11 +53,14 @@ public class Lock {
     /**
      * Atomically release this lock, allowing other threads to acquire it.
      */
+    
+    
     public void release() {
 	Lib.assertTrue(isHeldByCurrentThread());
 
 	boolean intStatus = Machine.interrupt().disable();
 
+	//where restoration should occur, when you call .nextThread() 
 	if ((lockHolder = waitQueue.nextThread()) != null)
 	    lockHolder.ready();
 	

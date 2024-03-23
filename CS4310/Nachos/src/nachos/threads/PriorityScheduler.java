@@ -149,6 +149,7 @@ public class PriorityScheduler extends Scheduler {
 	    getThreadState(thread).acquire(this);
 	}
 
+	//restore priority here
 	public KThread nextThread() {
 	    Lib.assertTrue(Machine.interrupt().disabled());
 	    
@@ -282,6 +283,7 @@ public class PriorityScheduler extends Scheduler {
 		}	
 		
 		
+		//check the the queue of the lock 
 		private int effectivePriority;	//what you should cache when priority is donated ; EFFECTIVE: the number used in the schedule 
 	
 		/** The thread with which this object is associated. */	   
