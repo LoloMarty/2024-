@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * A scheduler that chooses threads based on their priorities.
@@ -152,7 +153,7 @@ public class PriorityScheduler extends Scheduler {
 	//restore priority here
 	public KThread nextThread() {
 	    Lib.assertTrue(Machine.interrupt().disabled());
-	    
+	    getThreadState(KThread.currentThread()).getEffectivePriority();
 	    return pq.poll();
 	}
 
@@ -221,11 +222,13 @@ public class PriorityScheduler extends Scheduler {
 		 */
 		public int getEffectivePriority() {
 		    // implement me
-		    return priority;
+		    
 		    
 		    /* In whatever data structure effectivePriority is in,
 		     * get the last known priority of the thread 
 		     * */
+
+			 return this.effectivePriority.getFirst();
 		}
 	
 		/**
@@ -239,7 +242,7 @@ public class PriorityScheduler extends Scheduler {
 		    
 		    this.priority = priority;
 		    
-		    // implement me
+		    this.effectivePriority.add(priority);
 		    
 		    /* In whatever data structure effectivePriority is in,
 		     * add this new priority to the top of it so that it is 
@@ -261,6 +264,15 @@ public class PriorityScheduler extends Scheduler {
 		 */
 		public void waitForAccess(PriorityQueue waitQueue) {
 		    this.waitingFor = waitQueue;
+			
+			// get the priority of the highest priority thread in the waitQueue
+			int observedPriority = getThreadState(waitQueue.pq.peek()).getEffectivePriority();
+
+			// (?) add the current priority of the running thread to effectivePriority list of the running thread 
+			getThreadState(KThread.currentThread()).effectivePriority.add(getThreadState(KThread.currentThread()).getPriority());
+
+			// set the priority of the current thread to that of the highest priority thread in waitQueue
+			getThreadState(KThread.currentThread()).effectivePriority.add(observedPriority);
 		}
 	
 		/**
@@ -284,7 +296,7 @@ public class PriorityScheduler extends Scheduler {
 		
 		
 		//check the the queue of the lock 
-		private int effectivePriority;	//what you should cache when priority is donated ; EFFECTIVE: the number used in the schedule 
+		LinkedList<Integer> effectivePriority = new LinkedList<Integer>();	//what you should cache when priority is donated ; EFFECTIVE: the number used in the schedule 
 	
 		/** The thread with which this object is associated. */	   
 		protected KThread thread;
