@@ -25,6 +25,8 @@ public class CustomerLoyalty extends FoodBase{
             appliedDiscountRate = 1;
         }
 
+        System.out.printf("\n\nTotal Cost: %d\nTotal Cost W/ DISCOUNT: %d", (int)totalCost, (int)(totalCost * appliedDiscountRate));
+
         return (int)(totalCost * appliedDiscountRate);
     }
 }
