@@ -1,58 +1,80 @@
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class User {
     private final ChatServer server;
     private final String username;
     private LinkedList<Message> percievedChat;
+    private ChatHistory chatHistory;
 
     public User (String givenUsername)
     {
         this.username = givenUsername;
         this.server = ChatServer.getChatServerInstance();
+        percievedChat = new LinkedList<>();
+        this.chatHistory = new ChatHistory();
     }
 
-    public void writeToChat(String givenMessage)
+    public void writeToChat(String givenMessage, User[] givenRecipients)
     {
-        server.write(new Message(this.username, givenMessage));
+        server.write(new Message(this.username, givenMessage, givenRecipients, "123"));
     }
 
-    public void undoLastMessage()
+    public String getUsername()
     {
-        this.server.undoLastMessage();
+        return this.username;
     }
 
-    private LinkedList<Message> duplicateLinkedList(LinkedList<Message> originalList) {
-        LinkedList<Message > duplicateList = new LinkedList<>();
-
-        duplicateList.addAll(originalList);
-
-        return duplicateList;
-    }
-
-    public void updatePercievedChat(LinkedList<Message> givenChat)
+    public void undoLastMessage(User userToUndoMessage)
     {
-        this.percievedChat = duplicateLinkedList(givenChat);
+        Message firstMessage = percievedChat.getFirst();
+
+        //iterate through all messages
+        for (Message message : percievedChat)
+        {
+            if (Objects.equals(message.getSender(), userToUndoMessage.getUsername()))
+            {
+                percievedChat.remove(message);
+            }
+        }
+    }
+
+    public void updatePercievedChat(Message givenMessage)
+
+    {
+        this.percievedChat.addLast(givenMessage);
+        chatHistory.addMessageToHistory(givenMessage);
     }
 
     public void printPercievedChat()
     {
-        Deque<Message> chat = this.percievedChat;
-        Message firstMessageNode = chat.peekLast();
-        Message currentMessageNode = chat.pop();
-
-        System.out.println("\n*** " + this.username + " sees the chat as: ***");
-
-        while(!(firstMessageNode.equals(currentMessageNode)))
+        System.out.println(this.username + " sees: ");
+        for (Message message : this.percievedChat)
         {
-            System.out.println(currentMessageNode.getUsername() + " said:");
-            System.out.println("\t"+currentMessageNode.getText());
-            chat.addLast(currentMessageNode);
-            currentMessageNode = chat.pop();
+            System.out.println("Timestamp [" + message.getTimestamp() + "] " +
+                    message.getSender() + ": " + message.getText());
+        }
+    }
+
+    class ChatHistory {
+        LinkedList<MessageMomento> history;
+
+        public ChatHistory()
+        {
+            this.history = new LinkedList<>();
         }
 
-        System.out.println(currentMessageNode.getUsername() + " said:");
-        System.out.println("\t"+currentMessageNode.getText());
-        chat.addLast(currentMessageNode);
+        public void addMessageToHistory(Message message)
+        {
+            history.addFirst(new MessageMomento(message));
+        }
+
+        public MessageMomento getPriorHistory()
+        {
+            return history.pop();
+        }
+
     }
 }
