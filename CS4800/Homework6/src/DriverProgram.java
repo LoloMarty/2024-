@@ -15,5 +15,13 @@ public class DriverProgram {
         user1.printPercievedChat();
         user2.printPercievedChat();
         user3.printPercievedChat();
+
+        user1.requestUndoLastMessage();
+
+        System.out.println();
+
+        user1.printPercievedChat();
+        user2.printPercievedChat();
+        user3.printPercievedChat();
     }
 }

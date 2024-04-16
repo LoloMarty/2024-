@@ -27,14 +27,26 @@ public class User {
         return this.username;
     }
 
-    public void undoLastMessage(User userToUndoMessage)
+    public void requestUndoLastMessage()
+    {
+        server.sendUndoRequest(this);
+    }
+
+    public void processUndoLastMessage(User userToUndoMessage)
     {
         Message firstMessage = percievedChat.getFirst();
 
-        //iterate through all messages
-        for (Message message : percievedChat)
+        for (MessageMomento momento : chatHistory.returnWholeHistory())
         {
-            if (Objects.equals(message.getSender(), userToUndoMessage.getUsername()))
+            if (momento.getChatVersion().getSender() == userToUndoMessage.getUsername())
+            {
+                chatHistory.returnWholeHistory().remove(momento);
+            }
+        }
+
+        for(Message message : percievedChat)
+        {
+            if(!(message.getSender() == userToUndoMessage.username))
             {
                 percievedChat.remove(message);
             }
@@ -69,6 +81,11 @@ public class User {
         public void addMessageToHistory(Message message)
         {
             history.addFirst(new MessageMomento(message));
+        }
+
+        public LinkedList<MessageMomento> returnWholeHistory()
+        {
+            return this.history;
         }
 
         public MessageMomento getPriorHistory()

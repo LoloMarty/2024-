@@ -75,4 +75,12 @@ public class ChatServer {
 
         return returnValue;
     }
+
+    public void sendUndoRequest(User userRequesting)
+    {
+        for(User user : listOfUsers)
+        {
+            user.processUndoLastMessage(userRequesting);
+        }
+    }
 }
