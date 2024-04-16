@@ -3,12 +3,21 @@ import java.util.LinkedList;
 public class ChatServer {
     private static ChatServer instance;
     private static LinkedList<User> listOfUsers;
+
     private static LinkedList<User> listOfBlockedUsers;
 
     public ChatServer()
     {
         listOfUsers = new LinkedList<>();
         listOfBlockedUsers = new LinkedList<>();
+    }
+
+    public static LinkedList<User> getListOfUsers() {
+        return listOfUsers;
+    }
+
+    public static LinkedList<User> getListOfBlockedUsers() {
+        return listOfBlockedUsers;
     }
 
     public static ChatServer getChatServerInstance()

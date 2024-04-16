@@ -2,8 +2,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class User implements Iterable<MessageMomento>{
-    private final ChatServer server;
-    private final String username;
+    private ChatServer server;
+    private String username;
+
     private LinkedList<Message> percievedChat;
     private ChatHistory chatHistory;
 
@@ -15,10 +16,27 @@ public class User implements Iterable<MessageMomento>{
         this.chatHistory = new ChatHistory();
     }
 
+    public LinkedList<Message> getPercievedChat() {
+        return percievedChat;
+    }
+
     public void writeToChat(String givenMessage, User[] givenRecipients)
     {
         server.write(new Message(this.username, givenMessage, givenRecipients, "123"));
     }
+
+    public ChatServer getServer() {
+        return server;
+    }
+
+    public void setServer(ChatServer server) {
+        this.server = server;
+    }
+
+    public ChatHistory getChatHistory() {
+        return chatHistory;
+    }
+
 
     public String getUsername()
     {

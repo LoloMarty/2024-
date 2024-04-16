@@ -2,11 +2,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class SearchMessagesByUser implements Iterator<MessageMomento>{
+
     private LinkedList<MessageMomento> collection;
 
     public SearchMessagesByUser(LinkedList<MessageMomento> givenCollection)
     {
         this.collection = givenCollection;
+    }
+
+    public LinkedList<MessageMomento> getCollection() {
+        return collection;
+    }
+
+    public void setCollection(LinkedList<MessageMomento> collection) {
+        this.collection = collection;
     }
 
     @Override
