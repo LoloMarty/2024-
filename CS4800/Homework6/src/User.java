@@ -1,6 +1,7 @@
+import java.util.Iterator;
 import java.util.LinkedList;
 
-public class User {
+public class User implements Iterable<MessageMomento>{
     private final ChatServer server;
     private final String username;
     private LinkedList<Message> percievedChat;
@@ -62,6 +63,11 @@ public class User {
             System.out.println("Timestamp [" + message.getTimestamp() + "] " +
                     message.getSender() + ": " + message.getText());
         }
+    }
+
+    @Override
+    public Iterator<MessageMomento> iterator() {
+        return new SearchMessagesByUser(this.chatHistory.getWholeHistory());
     }
 
     class ChatHistory {
