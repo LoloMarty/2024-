@@ -1,7 +1,4 @@
-import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Objects;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class User {
     private final ChatServer server;
@@ -34,21 +31,18 @@ public class User {
 
     public void processUndoLastMessage(User userToUndoMessage)
     {
-        Message firstMessage = percievedChat.getFirst();
-
-        for (MessageMomento momento : chatHistory.returnWholeHistory())
+        for(MessageMomento momento : this.chatHistory.getWholeHistory())
         {
-            if (momento.getChatVersion().getSender() == userToUndoMessage.getUsername())
+            if(momento.getChatVersion().getSender() == userToUndoMessage.getUsername())
             {
-                chatHistory.returnWholeHistory().remove(momento);
+                this.chatHistory.getWholeHistory().remove(momento);
             }
         }
 
-        for(Message message : percievedChat)
+        for(Message message : this.percievedChat)
         {
-            if(!(message.getSender() == userToUndoMessage.username))
-            {
-                percievedChat.remove(message);
+            if(message.getSender() == userToUndoMessage.getUsername()) {
+                this.percievedChat.remove(message);
             }
         }
     }
@@ -83,7 +77,7 @@ public class User {
             history.addFirst(new MessageMomento(message));
         }
 
-        public LinkedList<MessageMomento> returnWholeHistory()
+        public LinkedList<MessageMomento> getWholeHistory()
         {
             return this.history;
         }
