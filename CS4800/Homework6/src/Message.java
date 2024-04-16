@@ -1,12 +1,19 @@
 public class Message {
+    private final String username;
     private final String text;
-    public Message(String givenText)
+
+    public Message(String givenUsername, String givenText)
     {
+        this.username = givenUsername;
         this.text = givenText;
     }
 
-    public String getText()
-    {
-        return this.text;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getText() {
+        return text;
     }
 }

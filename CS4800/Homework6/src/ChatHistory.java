@@ -1,36 +1,60 @@
+import java.util.LinkedList;
+
 class ChatHistory {
-    String messages;
+    private static LinkedList<Message> stateOfChat;
+    private static LinkedList<MessageMomento> chatHistory;
 
-    public String getMessages()
+    private static ChatHistory instance;
+
+    public ChatHistory()
     {
-        return this.messages;
+        stateOfChat = new LinkedList<>();
+        chatHistory = new LinkedList<>();
     }
 
-    public void set(String username, Message givenMessage)
+    public static ChatHistory getInstance()
     {
-        messages += "\n" + username + " says: " + givenMessage.getText();
-    }
-
-    public MessageMomento takeSnapshot()
-    {
-        return new MessageMomento(this.messages);
-    }
-
-    public void restore(MessageMomento momento)
-    {
-        this.messages = momento.getSavedText();
-    }
-
-    public class MessageMomento {
-        private final String message;
-        private MessageMomento(String messageToSave)
+        if(instance == null)
         {
-            this.message = messageToSave;
+            instance = new ChatHistory();
         }
 
-        public String getSavedText()
+        return instance;
+    }
+
+    public LinkedList<Message> getChatState()
+    {
+        return this.stateOfChat;
+    }
+    private LinkedList<Message> duplicateLinkedList(LinkedList<Message> originalList) {
+        LinkedList<Message > duplicateList = new LinkedList<>();
+        
+        duplicateList.addAll(originalList);
+
+        return duplicateList;
+    }
+    public void addMessage(Message givenMessage)
+    {
+        MessageMomento momento = new MessageMomento(this.duplicateLinkedList(stateOfChat));
+        chatHistory.addFirst(momento);
+        stateOfChat.add(givenMessage);
+    }
+    public void undo()
+    {
+        this.stateOfChat = chatHistory.pop().getChatVersion();
+    }
+    public class MessageMomento
+    {
+        private final LinkedList<Message> chatVersion;
+
+        public MessageMomento(LinkedList<Message> givenChat)
         {
-            return this.message;
+            this.chatVersion = givenChat;
+        }
+
+        public LinkedList<Message> getChatVersion()
+        {
+            return this.chatVersion;
         }
     }
 }
