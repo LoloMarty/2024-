@@ -52,7 +52,7 @@ public final class Machine {
 	TCB.givePrivilege(privilege);
 	privilege.stats = stats;
 
-	securityManager.enable();
+	//securityManager.enable();
 	createDevices();
 	checkUserClasses();
 
