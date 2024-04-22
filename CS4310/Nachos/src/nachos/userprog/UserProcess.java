@@ -345,10 +345,160 @@ public class UserProcess {
 	Lib.assertNotReached("Machine.halt() did not halt machine!");
 	return 0;
     }
+    
+    /**
+     * Handle the creat() system call.
+     */
+    private int handleCreat(int a0) {
+        // Read the filename from virtual memory
+        String filename = readVirtualMemoryString(a0, 256);
+        if (filename == null || filename.isEmpty()) {
+            return -1; // Error: Invalid filename
+        }
 
+        // Attempt to create the file using the file system
+        OpenFile file = ThreadedKernel.fileSystem.open(filename, true);
+        if (file == null) {
+            return -1; // Error: Failed to create the file
+        }
 
+        int fd = addFileDescriptor(file); // Add the file to the file descriptor table
+        if (fd == -1) {
+            file.close(); // Close the file if unable to add descriptor
+            return -1; // Error: Failed to add file descriptor
+        }
+
+        return fd; // Return the file descriptor
+    }
+
+    /**
+     * Handle the open() system call.
+     */
+    private int handleOpen(int a0) {
+        // Read the filename from virtual memory
+        String filename = readVirtualMemoryString(a0, 256);
+        if (filename == null || filename.isEmpty()) {
+            return -1; // Error: Invalid filename
+        }
+
+        // Attempt to open the file using the file system
+        OpenFile file = ThreadedKernel.fileSystem.open(filename, false);
+        if (file == null) {
+            return -1; // Error: Failed to open the file
+        }
+
+        int fd = addFileDescriptor(file); // Add the file to the file descriptor table
+        if (fd == -1) {
+            file.close(); // Close the file if unable to add descriptor
+            return -1; // Error: Failed to add file descriptor
+        }
+
+        return fd; // Return the file descriptor
+    }
+
+    /**
+     * Handle the read() system call.
+     */
+    private int handleRead(int fd, int bufferAddr, int count) {
+        // Validate file descriptor
+        if (!validFileDescriptor(fd)) {
+            return -1; // Error: Invalid file descriptor
+        }
+
+        // Read data from the file using the file descriptor
+        OpenFile file = fileDescriptorTable[fd];
+        byte[] buffer = new byte[count];
+        int bytesRead = file.read(buffer, 0, count);
+
+        // Write the read data to the provided buffer in virtual memory
+        int bytesWritten = writeVirtualMemory(bufferAddr, buffer, 0, bytesRead);
+
+        return bytesWritten;
+    }
+
+    /**
+     * Handle the write() system call.
+     */
+    private int handleWrite(int fd, int bufferAddr, int count) {
+        // Validate file descriptor
+        if (!validFileDescriptor(fd)) {
+            return -1; // Error: Invalid file descriptor
+        }
+
+        // Read data from the provided buffer in virtual memory
+        byte[] buffer = new byte[count];
+        int bytesRead = readVirtualMemory(bufferAddr, buffer);
+
+        // Write the data to the file using the file descriptor
+        OpenFile file = fileDescriptorTable[fd];
+        int bytesWritten = file.write(buffer, 0, bytesRead);
+
+        return bytesWritten;
+    }
+
+    /**
+     * Handle the close() system call.
+     */
+    private int handleClose(int fd) {
+        // Validate file descriptor
+        if (!validFileDescriptor(fd)) {
+            return -1; // Error: Invalid file descriptor
+        }
+
+        // Close the file associated with the file descriptor
+        OpenFile file = fileDescriptorTable[fd];
+        file.close();
+
+        // Remove the file descriptor from the table
+        fileDescriptorTable[fd] = null;
+
+        return 0; // Success
+    }
+
+    /**
+     * Handle the unlink() system call.
+     */
+    private int handleUnlink(int a0) {
+        // Read the filename from virtual memory
+        String filename = readVirtualMemoryString(a0, 256);
+        if (filename == null || filename.isEmpty()) {
+            return -1; // Error: Invalid filename
+        }
+
+        // Attempt to unlink (delete) the file using the file system
+        boolean success = ThreadedKernel.fileSystem.remove(filename);
+
+        return success ? 0 : -1; // Return success or failure
+    }
+
+    /**
+     * Helper method to add a file descriptor to the file descriptor table.
+     * Returns the assigned file descriptor index, or -1 if the table is full.
+     */
+    private int addFileDescriptor(OpenFile file) {
+        for (int i = 0; i < MAX_OPEN_FILES; i++) {
+            if (fileDescriptorTable[i] == null) {
+                fileDescriptorTable[i] = file;
+                return i; // Return the assigned file descriptor index
+            }
+        }
+        return -1; // Error: File descriptor table is full
+    }
+
+    /**
+     * Helper method to check if a file descriptor is valid.
+     */
+    private boolean validFileDescriptor(int fd) {
+        return fd >= 0 && fd < MAX_OPEN_FILES && fileDescriptorTable[fd] != null;
+    }
+
+    // Constants
+    private static final int MAX_OPEN_FILES = 16; // Maximum number of concurrently open files per process
+    private OpenFile[] fileDescriptorTable = new OpenFile[MAX_OPEN_FILES]; // File descriptor table
+    
+    
     private static final int
-        syscallHalt = 0,
+    syscallHalt = 0,
 	syscallExit = 1,
 	syscallExec = 2,
 	syscallJoin = 3,
