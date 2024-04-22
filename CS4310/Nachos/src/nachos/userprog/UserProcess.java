@@ -349,9 +349,8 @@ public class UserProcess {
     /**
      * Handle the creat() system call.
      */
-    private int handleCreat(int a0) {
+    int creat(String filename) {
         // Read the filename from virtual memory
-        String filename = readVirtualMemoryString(a0, 256);
         if (filename == null || filename.isEmpty()) {
             return -1; // Error: Invalid filename
         }
@@ -374,9 +373,8 @@ public class UserProcess {
     /**
      * Handle the open() system call.
      */
-    private int handleOpen(int a0) {
+    int open(String filename) {
         // Read the filename from virtual memory
-        String filename = readVirtualMemoryString(a0, 256);
         if (filename == null || filename.isEmpty()) {
             return -1; // Error: Invalid filename
         }
@@ -399,14 +397,14 @@ public class UserProcess {
     /**
      * Handle the read() system call.
      */
-    private int handleRead(int fd, int bufferAddr, int count) {
+    private int read(int fileDescriptor, int bufferAddr, int count) {
         // Validate file descriptor
-        if (!validFileDescriptor(fd)) {
+        if (!validFileDescriptor(fileDescriptor)) {
             return -1; // Error: Invalid file descriptor
         }
 
         // Read data from the file using the file descriptor
-        OpenFile file = fileDescriptorTable[fd];
+        OpenFile file = fileDescriptorTable[fileDescriptor];
         byte[] buffer = new byte[count];
         int bytesRead = file.read(buffer, 0, count);
 
@@ -419,9 +417,9 @@ public class UserProcess {
     /**
      * Handle the write() system call.
      */
-    private int handleWrite(int fd, int bufferAddr, int count) {
+    int write(int fileDescriptor, int bufferAddr, int count) {
         // Validate file descriptor
-        if (!validFileDescriptor(fd)) {
+        if (!validFileDescriptor(fileDescriptor)) {
             return -1; // Error: Invalid file descriptor
         }
 
@@ -430,7 +428,7 @@ public class UserProcess {
         int bytesRead = readVirtualMemory(bufferAddr, buffer);
 
         // Write the data to the file using the file descriptor
-        OpenFile file = fileDescriptorTable[fd];
+        OpenFile file = fileDescriptorTable[fileDescriptor];
         int bytesWritten = file.write(buffer, 0, bytesRead);
 
         return bytesWritten;
@@ -439,36 +437,15 @@ public class UserProcess {
     /**
      * Handle the close() system call.
      */
-    private int handleClose(int fd) {
-        // Validate file descriptor
-        if (!validFileDescriptor(fd)) {
-            return -1; // Error: Invalid file descriptor
-        }
-
-        // Close the file associated with the file descriptor
-        OpenFile file = fileDescriptorTable[fd];
-        file.close();
-
-        // Remove the file descriptor from the table
-        fileDescriptorTable[fd] = null;
-
+    private int close(int fd) {
         return 0; // Success
     }
 
     /**
      * Handle the unlink() system call.
      */
-    private int handleUnlink(int a0) {
-        // Read the filename from virtual memory
-        String filename = readVirtualMemoryString(a0, 256);
-        if (filename == null || filename.isEmpty()) {
-            return -1; // Error: Invalid filename
-        }
-
-        // Attempt to unlink (delete) the file using the file system
-        boolean success = ThreadedKernel.fileSystem.remove(filename);
-
-        return success ? 0 : -1; // Return success or failure
+    private int unlink(int a0) {
+        return 0;
     }
 
     /**
@@ -541,6 +518,8 @@ public class UserProcess {
 	switch (syscall) {
 	case syscallHalt:
 	    return handleHalt();
+	case syscallExit:
+		return handleExit();
 
 
 	default:
@@ -548,6 +527,23 @@ public class UserProcess {
 	    Lib.assertNotReached("Unknown system call!");
 	}
 	return 0;
+    }
+    
+    private int handleExit()
+    {
+    	//TODO Auto-generated method stub
+    	
+    	for (OpenFile fd : fileDescriptorTable)
+    		if (fd != null)
+    				fd.close(); 
+    	
+    	coff.close();
+    	
+    	UThread.finish();
+    	
+    	Machine.halt();
+    		    	
+		return 0;
     }
 
     /**
