@@ -346,10 +346,25 @@ public class UserProcess {
 	return 0;
     }
     
+    private void halt()
+    {
+    	this.handleHalt();
+    }
+    
+    private void exit(int status)
+    {
+    	this.handleExit();
+    }
+    
+    private int exec(String file, int argc, String[] argv)
+    {
+    	return 0;
+    }
+    
     /**
      * Handle the creat() system call.
      */
-    int creat(String filename) {
+    private int creat(String filename) {
         // Read the filename from virtual memory
         if (filename == null || filename.isEmpty()) {
             return -1; // Error: Invalid filename
@@ -373,7 +388,7 @@ public class UserProcess {
     /**
      * Handle the open() system call.
      */
-    int open(String filename) {
+    private int open(String filename) {
         // Read the filename from virtual memory
         if (filename == null || filename.isEmpty()) {
             return -1; // Error: Invalid filename
@@ -417,7 +432,7 @@ public class UserProcess {
     /**
      * Handle the write() system call.
      */
-    int write(int fileDescriptor, int bufferAddr, int count) {
+    private int write(int fileDescriptor, int bufferAddr, int count) {
         // Validate file descriptor
         if (!validFileDescriptor(fileDescriptor)) {
             return -1; // Error: Invalid file descriptor
