@@ -437,15 +437,30 @@ public class UserProcess {
     /**
      * Handle the close() system call.
      */
-    private int close(int fd) {
+    private int close(int fileDescriptor) {
         return 0; // Success
     }
 
     /**
      * Handle the unlink() system call.
      */
-    private int unlink(int a0) {
+    private int unlink(String name) {
         return 0;
+    }
+    
+    private int nmap (int fileDescriptor, String address)
+    {
+    	return 0;
+    }
+    
+    private int connect(int host, int port)
+    {
+    	return 0;
+    }
+    
+    private int accept(int port)
+    {
+    	return 0;
     }
 
     /**
