@@ -358,8 +358,46 @@ public class UserProcess {
     
     private int exec(String file, int argc, String[] argv)
     {
-    	return 0;
+        // Open the file
+        OpenFile executable = ThreadedKernel.fileSystem.open(file, true);
+        if (executable == null) {
+            System.out.println("Unable to open file: " + file);
+            return -1;
+        }
+        
+        // Load the program into the address space
+        if (!space.load()) {
+            System.out.println("Unable to load program: " + file);
+            return -1;
+        }
+        
+        // Close the file
+        executable.close();
+        
+        // Set up the arguments for the new process
+        int argvAddr = 0;
+        if (argc > 0) {
+            // Calculate space needed for argv
+            argvAddr = space.allocateArgs(argc);
+            if (argvAddr < 0) {
+                System.out.println("Insufficient memory for arguments");
+                return -1;
+            }
+            
+            // Copy arguments to user space
+            for (int i = 0; i < argc; i++) {
+                space.writeArg(argv[i], argvAddr + (i * 4));
+            }
+        }
+        
+        // Create a new thread for the process
+        KThread newThread = new KThread(file, space, argvAddr);
+        newThread.fork();
+        
+        // Return the process ID
+        return newThread.
     }
+
     
     /**
      * Handle the creat() system call.
