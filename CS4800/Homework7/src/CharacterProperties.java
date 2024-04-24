@@ -1,0 +1,3 @@
+interface CharacterProperties {
+    void apply();
+}
