@@ -23,6 +23,9 @@ public class UserProcess {
      * Allocate a new process.
      */
     public UserProcess() {
+    fileDescriptorTable[0] = new OpenFile();
+    fileDescriptorTable[1] = new OpenFile();
+    
 	int numPhysPages = Machine.processor().getNumPhysPages();
 	pageTable = new TranslationEntry[numPhysPages];
 	for (int i=0; i<numPhysPages; i++)
@@ -365,6 +368,9 @@ public class UserProcess {
             return -1;
         }
         
+        // Create a new address space
+        
+        
         // Load the program into the address space
         if (!space.load()) {
             System.out.println("Unable to load program: " + file);
@@ -372,7 +378,7 @@ public class UserProcess {
         }
         
         // Close the file
-        executable.close();
+        ThreadedKernel.fileSystem.remove(file);
         
         // Set up the arguments for the new process
         int argvAddr = 0;
@@ -538,7 +544,7 @@ public class UserProcess {
     }
 
     // Constants
-    private static final int MAX_OPEN_FILES = 16; // Maximum number of concurrently open files per process
+    private static final int MAX_OPEN_FILES = 18; // Maximum number of concurrently open files per process
     private OpenFile[] fileDescriptorTable = new OpenFile[MAX_OPEN_FILES]; // File descriptor table
     
     
