@@ -450,10 +450,10 @@ public class UserProcess {
             return -1; 
         }
 
+        OpenFile file = fileDescriptorTable[fileDescriptor];
         byte[] buffer = new byte[count];
         int bytesRead = readVirtualMemory(bufferAddr, buffer);
 
-        OpenFile file = fileDescriptorTable[fileDescriptor];
         int bytesWritten = file.write(buffer, 0, bytesRead);
 
         return bytesWritten;
