@@ -6,18 +6,19 @@ int main()
     int intResult;
 
     double doubleResult;
-    // long double doubleResult;
+    //long double doubleResult;
 
     clock_t start, end;
     double cpu_time_used1;
     double cpu_time_used2;
     double timeDifference;
+    double timePercentage;
     int iterations = 100000000; // 100000000
     int loopBound = 4;
 
     for (int loops = 0; loops < loopBound; loops++)
     {
-        printf("\n\nIteration %d\n", loops + 1);
+        printf("\n\nIteration #%d\nUsing Number: %d\n", loops + 1, iterations);
 
         // Measure execution time for integer arithmetic
         start = clock();
@@ -45,10 +46,14 @@ int main()
         printf("Double arithmetic execution time: %f seconds\n", cpu_time_used2);
 
         timeDifference = (cpu_time_used1 > cpu_time_used2) ? cpu_time_used1 - cpu_time_used2 : cpu_time_used2 - cpu_time_used1;
-        printf("Time Difference: %f\n", timeDifference);
+        timePercentage = (cpu_time_used1 > cpu_time_used2) ? ((cpu_time_used1 / cpu_time_used2)-1)*100 : ((cpu_time_used2 / cpu_time_used1)-1)*100;
+        printf("Time Difference (s): %f\n", timeDifference);
+        printf("Time Difference (%%): %f\n", timePercentage);
 
         iterations *= 10;
     }
+
+    scanf("");
 
     return 0;
 }
