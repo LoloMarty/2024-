@@ -19,6 +19,24 @@ import java.io.EOFException;
  * @see	nachos.network.NetProcess
  */
 public class UserProcess {
+	
+	/** The program being run by this process. */
+    protected Coff coff;
+
+    /** This process's page table. */
+    protected TranslationEntry[] pageTable;
+    /** The number of contiguous pages occupied by the program. */
+    protected int numPages;
+
+    /** The number of pages in the program's stack. */
+    protected final int stackPages = 8;
+    
+    private int initialPC, initialSP;
+    private int argc, argv;
+	
+    private static final int pageSize = Processor.pageSize;
+    private static final char dbgProcess = 'a';
+    
     /**
      * Allocate a new process.
      */
@@ -360,34 +378,9 @@ public class UserProcess {
     }
     
     private int exec(String file, int argc, String[] argv) {
-        // Check if the file exists
-        OpenFile executable = ThreadedKernel.fileSystem.open(file, true);
-        if (executable == null) {
-            System.out.println("Unable to open file: " + file);
-            return -1;
-        }
-        
-        // Load the executable file into memory
-        
-        
-        // Allocate a new process
-        UserProcess newProcess = new UserProcess();
-        
-        // Initialize the new process
-        if (!newProcess.execute(file, argv)) {
-            System.out.println("Unable to execute file: " + file);
-            return -1;
-        }
-        
-        // Add the new process to the scheduler
-        ThreadedKernel.scheduler.
-        
-        // Return the process ID
-        
+    	return 0;
     }
 
-
-    
     /**
      * Handle the creat() system call.
      */
@@ -404,7 +397,7 @@ public class UserProcess {
         }
 
         int fd = addFileDescriptor(file); 
-        if (fd == -1) {
+        if (!this.validFileDescriptor(fd)) {
             file.close(); 
             return -1; 
         }
@@ -426,7 +419,7 @@ public class UserProcess {
         }
 
         int fd = addFileDescriptor(file); 
-        if (fd == -1) {
+        if (!this.validFileDescriptor(fd)) {
             file.close(); 
             return -1; 
         }
@@ -446,9 +439,7 @@ public class UserProcess {
         byte[] buffer = new byte[count];
         int bytesRead = file.read(buffer, 0, count);
 
-        int bytesWritten = writeVirtualMemory(bufferAddr, buffer, 0, bytesRead);
-
-        return bytesWritten;
+        return bytesRead;
     }
 
     /**
@@ -472,6 +463,19 @@ public class UserProcess {
      * Handle the close() system call.
      */
     private int close(int fileDescriptor) {
+    	 if (!validFileDescriptor(fileDescriptor)) {
+             return -1; 
+         }
+    	 
+        OpenFile file = fileDescriptorTable[fileDescriptor];
+        
+        if(file == null)
+        {
+        	return -1;
+        }
+        
+        file.close();
+        
         return 0;
     }
 
@@ -479,6 +483,30 @@ public class UserProcess {
      * Handle the unlink() system call.
      */
     private int unlink(String name) {
+        if(name == null || name.isEmpty())
+        {
+        	return -1;
+        }
+        
+        
+        OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
+    	if (executable == null) {
+    	    Lib.debug(dbgProcess, "\topen failed");
+    	    return -1;
+    	}
+
+    	try {
+    	    coff = new Coff(executable);
+    	}
+    	catch (EOFException e) {
+    	    executable.close();
+    	    Lib.debug(dbgProcess, "\tcoff load failed");
+    	    return -1;
+    	}
+    	
+    	
+    	coff.close();
+        
         return 0;
     }
     
@@ -625,20 +653,5 @@ public class UserProcess {
 	}
     }
 
-    /** The program being run by this process. */
-    protected Coff coff;
-
-    /** This process's page table. */
-    protected TranslationEntry[] pageTable;
-    /** The number of contiguous pages occupied by the program. */
-    protected int numPages;
-
-    /** The number of pages in the program's stack. */
-    protected final int stackPages = 8;
     
-    private int initialPC, initialSP;
-    private int argc, argv;
-	
-    private static final int pageSize = Processor.pageSize;
-    private static final char dbgProcess = 'a';
 }
