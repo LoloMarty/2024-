@@ -359,50 +359,33 @@ public class UserProcess {
     	this.handleExit();
     }
     
-    private int exec(String file, int argc, String[] argv)
-    {
-        // Open the file
+    private int exec(String file, int argc, String[] argv) {
+        // Check if the file exists
         OpenFile executable = ThreadedKernel.fileSystem.open(file, true);
         if (executable == null) {
             System.out.println("Unable to open file: " + file);
             return -1;
         }
         
-        // Create a new address space
+        // Load the executable file into memory
         
         
-        // Load the program into the address space
-        if (!space.load()) {
-            System.out.println("Unable to load program: " + file);
+        // Allocate a new process
+        UserProcess newProcess = new UserProcess();
+        
+        // Initialize the new process
+        if (!newProcess.execute(file, argv)) {
+            System.out.println("Unable to execute file: " + file);
             return -1;
         }
         
-        // Close the file
-        ThreadedKernel.fileSystem.remove(file);
-        
-        // Set up the arguments for the new process
-        int argvAddr = 0;
-        if (argc > 0) {
-            // Calculate space needed for argv
-            argvAddr = space.allocateArgs(argc);
-            if (argvAddr < 0) {
-                System.out.println("Insufficient memory for arguments");
-                return -1;
-            }
-            
-            // Copy arguments to user space
-            for (int i = 0; i < argc; i++) {
-                space.writeArg(argv[i], argvAddr + (i * 4));
-            }
-        }
-        
-        // Create a new thread for the process
-        KThread newThread = new KThread(file, space, argvAddr);
-        newThread.fork();
+        // Add the new process to the scheduler
+        ThreadedKernel.scheduler.
         
         // Return the process ID
-        return newThread.
+        
     }
+
 
     
     /**
@@ -411,63 +394,58 @@ public class UserProcess {
     private int creat(String filename) {
         // Read the filename from virtual memory
         if (filename == null || filename.isEmpty()) {
-            return -1; // Error: Invalid filename
+            return -1; 
         }
 
         // Attempt to create the file using the file system
         OpenFile file = ThreadedKernel.fileSystem.open(filename, true);
         if (file == null) {
-            return -1; // Error: Failed to create the file
+            return -1; 
         }
 
-        int fd = addFileDescriptor(file); // Add the file to the file descriptor table
+        int fd = addFileDescriptor(file); 
         if (fd == -1) {
-            file.close(); // Close the file if unable to add descriptor
-            return -1; // Error: Failed to add file descriptor
+            file.close(); 
+            return -1; 
         }
 
-        return fd; // Return the file descriptor
+        return fd; 
     }
 
     /**
      * Handle the open() system call.
      */
     private int open(String filename) {
-        // Read the filename from virtual memory
         if (filename == null || filename.isEmpty()) {
-            return -1; // Error: Invalid filename
+            return -1; 
         }
 
-        // Attempt to open the file using the file system
         OpenFile file = ThreadedKernel.fileSystem.open(filename, false);
         if (file == null) {
-            return -1; // Error: Failed to open the file
+            return -1; 
         }
 
-        int fd = addFileDescriptor(file); // Add the file to the file descriptor table
+        int fd = addFileDescriptor(file); 
         if (fd == -1) {
-            file.close(); // Close the file if unable to add descriptor
-            return -1; // Error: Failed to add file descriptor
+            file.close(); 
+            return -1; 
         }
 
-        return fd; // Return the file descriptor
+        return fd; 
     }
 
     /**
      * Handle the read() system call.
      */
     private int read(int fileDescriptor, int bufferAddr, int count) {
-        // Validate file descriptor
         if (!validFileDescriptor(fileDescriptor)) {
-            return -1; // Error: Invalid file descriptor
+            return -1; 
         }
 
-        // Read data from the file using the file descriptor
         OpenFile file = fileDescriptorTable[fileDescriptor];
         byte[] buffer = new byte[count];
         int bytesRead = file.read(buffer, 0, count);
 
-        // Write the read data to the provided buffer in virtual memory
         int bytesWritten = writeVirtualMemory(bufferAddr, buffer, 0, bytesRead);
 
         return bytesWritten;
@@ -477,16 +455,13 @@ public class UserProcess {
      * Handle the write() system call.
      */
     private int write(int fileDescriptor, int bufferAddr, int count) {
-        // Validate file descriptor
         if (!validFileDescriptor(fileDescriptor)) {
-            return -1; // Error: Invalid file descriptor
+            return -1; 
         }
 
-        // Read data from the provided buffer in virtual memory
         byte[] buffer = new byte[count];
         int bytesRead = readVirtualMemory(bufferAddr, buffer);
 
-        // Write the data to the file using the file descriptor
         OpenFile file = fileDescriptorTable[fileDescriptor];
         int bytesWritten = file.write(buffer, 0, bytesRead);
 
@@ -497,7 +472,7 @@ public class UserProcess {
      * Handle the close() system call.
      */
     private int close(int fileDescriptor) {
-        return 0; // Success
+        return 0;
     }
 
     /**
@@ -530,10 +505,10 @@ public class UserProcess {
         for (int i = 0; i < MAX_OPEN_FILES; i++) {
             if (fileDescriptorTable[i] == null) {
                 fileDescriptorTable[i] = file;
-                return i; // Return the assigned file descriptor index
+                return i; 
             }
         }
-        return -1; // Error: File descriptor table is full
+        return -1; 
     }
 
     /**
