@@ -1,0 +1,3 @@
+interface CharacterInterface {
+        void apply();
+}
