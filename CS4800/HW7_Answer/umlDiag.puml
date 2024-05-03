@@ -1,5 +1,6 @@
 @startuml
-'https://plantuml.com/sequence-diagram
+
+left to right direction
 
 Class Character
 {
