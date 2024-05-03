@@ -132,7 +132,7 @@ object "<u>Flyweights1 : CharacterPropertiesFactory</u>" as FlyW1{
 }
 
 object "<u>HashKey1 : Map<String, CharacterProperties></u>" as HashK1{
-    key = "Verdana18Blue0"
+    key = "Verdana18Blue"
     value = Font2
 }
 
@@ -191,7 +191,7 @@ object "<u>readDocumentVerify : Document</u>" as verifyDocument{
     propertiesFactory = Flyweights1a
 }
 
-object "<u>Font1 : CharacterProperties</u>" as Font1V{
+object "<u>Font1_Verify : CharacterProperties</u>" as Font1V{
     color = "Black"
     font = "Arial"
     size = 16
@@ -322,7 +322,7 @@ object "<u>Flyweights1a : CharacterPropertiesFactory</u>" as FlyW1a{
 }
 
 object "<u>HashKey1 : Map<String, CharacterProperties></u>" as HashK1a{
-    key = "Verdana18Blue0"
+    key = "Verdana18Blue"
     value = Font2_Verify
 }
 
@@ -375,7 +375,7 @@ HashK1a ..> Font2V
 HashK2a ..> Font1aV
 HashK3a ..> Font2aV
 HashK4a ..> Font1V
-HashK5a --* Font3V
+HashK5a ..> Font3V
 
 
 

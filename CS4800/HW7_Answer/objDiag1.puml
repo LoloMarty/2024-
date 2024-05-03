@@ -132,7 +132,7 @@ object "<u>Flyweights1 : CharacterPropertiesFactory</u>" as FlyW1{
 }
 
 object "<u>HashKey1 : Map<String, CharacterProperties></u>" as HashK1{
-    key = "Verdana18Blue0"
+    key = "Verdana18Blue"
     value = Font2
 }
 

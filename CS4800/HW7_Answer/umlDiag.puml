@@ -51,14 +51,14 @@ Class Driver
     + main ( args : String[] ) : void {static}
 }
 
-Character "1..*"<-- Document : Has
+Character --* "1" Document
 
-CharacterProperties "1"<-- Character : Has
-CharacterProperties --* CharacterPropertiesFactory
+CharacterProperties --* "1" Character
+CharacterProperties --* "1"CharacterPropertiesFactory
 CharacterProperties <.. Document
 
 CharacterPropertiesFactory --* "1" Document
 
-Document <.. Driver
+Document <.. Driver : References
 
 @enduml
