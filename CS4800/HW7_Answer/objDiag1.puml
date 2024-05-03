@@ -1,0 +1,185 @@
+@startuml
+
+object "<u>testDocument : Document</u>" as testDocument{
+    characters = Character1, Character2, Character3, Character4, Character5, Character6, Character7, Character8, Character9, Character10, Character11, Character12, Character13, Character14, Character15, Character16
+    propertiesFactory = Flyweights1
+}
+
+object "<u>Font1 : CharacterProperties</u>" as Font1{
+    color = "Black"
+    font = "Arial"
+    size = 16
+}
+
+object "<u>Font1a : CharacterProperties</u>" as Font1a{
+    color = "Black"
+    font = "Arial"
+    size = 14
+}
+
+object "<u>Font2 : CharacterProperties</u>" as Font2{
+    color = "Blue"
+    font = "Verdana"
+    size = 18
+}
+
+object "<u>Font2a : CharacterProperties</u>" as Font2a{
+    color = "Red"
+    font = "Verdana"
+    size = 12
+}
+
+object "<u>Character1 : Character</u>" as Char1{
+    character = 'H'
+    characterProperty = Font1
+}
+Char1 ..> Font1
+
+object "<u>Character2 : Character</u>" as Char2{
+    character = 'e'
+    characterProperty = Font1a
+}
+Char2 ..> Font1a
+
+object "<u>Character3 : Character</u>" as Char3{
+    character = 'l'
+    characterProperty = Font1a
+}
+Char3 ..> Font1a
+
+object "<u>Character4 : Character</u>" as Char4{
+    character = 'l'
+    characterProperty = Font1a
+}
+Char4 ..> Font1a
+
+object "<u>Character5 : Character</u>" as Char5{
+    character = 'o'
+    characterProperty = Font1a
+}
+Char5 ..> Font1a
+
+object "<u>Character6 : Character</u>" as Char6{
+    character = 'W'
+    characterProperty = Font1
+}
+Char6 ..> Font1
+
+object "<u>Character7 : Character</u>" as Char7{
+    character = 'o'
+    characterProperty = Font1a
+}
+Char7 ..> Font1a
+
+object "<u>Character8 : Character</u>" as Char8{
+    character = 'r'
+    characterProperty = Font1a
+}
+Char8 ..> Font1a
+
+object "<u>Character9 : Character</u>" as Char9{
+    character = 'l'
+    characterProperty = Font1a
+}
+Char9 ..> Font1a
+
+object "<u>Character10 : Character</u>" as Char10{
+    character = 'd'
+    characterProperty = Font1a
+}
+Char10 ..> Font1a
+
+object "<u>Character11 : Character</u>" as Char11{
+    character = 'C'
+    characterProperty = Font2
+}
+Char11 ..> Font2
+
+object "<u>Character12 : Character</u>" as Char12{
+    character = 'S'
+    characterProperty = Font2
+}
+Char12 ..> Font2
+
+object "<u>Character13 : Character</u>" as Char13{
+    character = '5'
+    characterProperty = Font2a
+}
+Char13 ..> Font2a
+
+object "<u>Character14 : Character</u>" as Char14{
+    character = '8'
+    characterProperty = Font2a
+}
+Char14 ..> Font2a
+
+object "<u>Character15 : Character</u>" as Char15{
+    character = '0'
+    characterProperty = Font2a
+}
+Char15 ..> Font2a
+
+object "<u>Character16 : Character</u>" as Char16{
+    character = '0'
+    characterProperty = Font2a
+}
+Char16 ..> Font2a
+
+object "<u>Flyweights1 : CharacterPropertiesFactory</u>" as FlyW1{
+    flyweights = HashKey1, HashKey2, HashKey3, HashKey4
+}
+
+object "<u>HashKey1 : Map<String, CharacterProperties></u>" as HashK1{
+    key = "Verdana18Blue0"
+    value = Font2
+}
+
+object "<u>HashKey2 : Map<String, CharacterProperties></u>" as HashK2{
+    key = "Arial14Black"
+    value = Font1a
+}
+
+object "<u>HashKey3 : Map<String, CharacterProperties></u>" as HashK3{
+    key = "Verdana12Red"
+    value = Font2a
+}
+
+object "<u>HashKey4 : Map<String, CharacterProperties></u>" as HashK4{
+    key = "Arial16Black"
+    value = Font1
+}
+
+Char1 --* testDocument
+Char2 --* testDocument
+Char3 --* testDocument
+Char4 --* testDocument
+Char5 --* testDocument
+Char6 --* testDocument
+Char7 --* testDocument
+Char8 --* testDocument
+Char9 --* testDocument
+Char10 --* testDocument
+Char11 --* testDocument
+Char12 --* testDocument
+Char13 --* testDocument
+Char14 --* testDocument
+Char15 --* testDocument
+Char16 --* testDocument
+
+FlyW1 --* testDocument
+
+HashK1 --* FlyW1
+HashK2 --* FlyW1
+HashK3 --* FlyW1
+HashK4 --* FlyW1
+
+HashK1 ..> Font2
+HashK2 ..> Font1a
+HashK3 ..> Font2a
+HashK4 ..> Font1
+
+
+
+
+
+@enduml

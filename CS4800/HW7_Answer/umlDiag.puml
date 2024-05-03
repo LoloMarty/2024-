@@ -1,0 +1,63 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+Class Character
+{
+    - character : character
+    - characterProperty : CharacterProperties
+
+    + Character ( character : char, characterProperty : CharacterProperties )
+    + setCharacter ( character : char ) : void
+    + setCharacterProperty ( characterProperty : CharacterProperties ) : void
+    + getCharacter () : char
+    + getFont () : String
+    + getColor () : String
+    + getSize () : int
+}
+
+Class CharacterProperties
+{
+    - font : String {readOnly}
+    - color : String {readOnly}
+    - size : int {readOnly}
+
+    + CharacterProperties ( font : Strong, color : String, size : int)
+    + getFont () : String
+    + getColor () : String
+    + getSize () : int
+}
+
+Class CharacterPropertiesFactory
+{
+  - flyweights : Map<String, CharacterProperties> {readOnly}
+  + setAndRetrieveFlyweightCharacterProperties ( font : String, color : String, size : int ) : CharacterProperties
+  + sizeOfMap () : int
+}
+
+Class Document
+{
+    - characters : List<Character> {readOnly}
+    - propertiesFactory : CharacterPropertiesFactory {readOnly}
+
+    + addCharacter ( c : char, font : String, color : String, size : int ) : void
+    + editCharacterProperties ( index : int, font : String, color : String, size : int ) : void
+    + saveToFile ( filename : String) : void <<throws>> IOException
+    + loadFromFile ( filename : String ) : void <<throws>> IOException
+}
+
+Class Driver
+{
+    + main ( args : String[] ) : void {static}
+}
+
+Character "1..*"<-- Document : Has
+
+CharacterProperties "1"<-- Character : Has
+CharacterProperties --* CharacterPropertiesFactory
+CharacterProperties <.. Document
+
+CharacterPropertiesFactory --* "1" Document
+
+Document <.. Driver
+
+@enduml

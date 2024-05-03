@@ -1,0 +1,75 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+Class CharacterAttributes
+{
+    - font : String {readOnly}
+    - color : String {readOnly}
+    - size : int {readOnly}
+
+    + CharacterAttributes (givenFont : String, givenColor : String, givenSize : int)
+    + apply () : void
+    + getFont () : String
+    + getColor () : String
+    + getSize () : int
+}
+
+Class Character
+{
+    - heldCharacter : String
+    - attributes : CharacterAttributes
+
+    + Character (givenCharacter : String, givenFont : String, givenColor : String, givenSize : int)
+    + printCharacterAttributes () : void
+    + getAttributes () : CharacterAttributes
+    + setAttributes (attributes : CharacterAttributes) : void
+    + getHeldCharacter () : String
+}
+
+Class CharacterAttributesFactory
+{
+    - propertiesMap : Map<String, CharacterAttributes> {static}
+
+    + getCharacterProperties (font : String, color : String, size : int) : CharacterAttributes {static}
+}
+
+Interface CharacterInterface
+{
+    apply() : void
+}
+
+Class CharString
+{
+    - string : ArrayList<Character>
+    - fileName : String
+
+    + CharString ()
+    + save (givenCharacter : String, givenFont : String, givenColor : String, givenSize : int) : void
+    + buildString () : String
+    + load() : void
+}
+
+Class Disk
+{
+    - document : CharString {static}
+
+    + getDocument() : CharString {static}
+}
+
+Class DriverProgram
+{
+    + main ( args : String[] ) : void {static}
+}
+
+DriverProgram *-- CharString
+DriverProgram ..> Disk
+CharString --* Disk
+CharString *-- Character
+CharacterInterface <|.. CharacterAttributes
+Character *-- CharacterAttributes
+CharacterAttributesFactory *-- CharacterAttributes
+Character ..> CharacterAttributesFactory
+
+
+
+@enduml
