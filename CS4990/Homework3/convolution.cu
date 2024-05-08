@@ -1,18 +1,26 @@
-#inlcude <opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 #include <sys/time.h>
 
 #define FILTER_RADIUS 2
 
 //for simplicity, we use the constant average filter only in this assignment
-const float F_h[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1] = {
+__constant__ float F_h[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1] = {
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}
-}
+};
 
-__constant__ float F_d[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1];
+__constant__ float F_d[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1] = {
+    {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
+    {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
+    {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
+    {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
+    {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}
+};
+
+//cudaMemcpyToSymbol(F_d, F_h, (2*FILTER_RADIUS+1)*(2*FILTER_RADIUS+1)*sizeof(float));
 
 // check CUDA error if exists
 #define CHECK(call){ \
@@ -24,9 +32,10 @@ __constant__ float F_d[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1];
     } \
 }
 
+const float relativeTolerance = 1e-2;
+
 // check if the difference of two cv::Mat images is small
-bool verify(cv::Mat answer1, cv::Mat answer2, unsigned int nRows, unsinged int nCols) {
-    const float relativeTolerance = 1e-2;
+bool verify(cv::Mat answer1, cv::Mat answer2, unsigned int nRows, unsigned int nCols) { 
     for(int i=0; i<nRows; i++){
         for(int j=0; j<nCols; j++){
             float relativeError = ((float)answer1.at<unsigned char>(i, j) - (float)answer2.at<unsigned char>(i,j)) / 255;
@@ -81,7 +90,7 @@ __global__ void blurImage_Kernel (unsigned char * Pout, unsigned char * pin, uns
                 int ii = i + fi;
                 int jj = j + fj;
                 if(ii >= 0 && ii < height && jj >= 0 && jj < width) {
-                    sum += F_h[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * Pin[ii * width + jj];
+                    sum += F_h[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * pin[ii * width + jj];
                 }
             }
         }
@@ -103,6 +112,7 @@ void blurImage_d(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsi
     dim3 threadsPerBlock(16, 16);
     dim3 numBlocks((nCols + threadsPerBlock.x - 1) / threadsPerBlock.x, (nRows + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
+    cudaMemcpyToSymbol(F_d, F_h, (2*FILTER_RADIUS+1)*(2*FILTER_RADIUS+1)*sizeof(float));
     blurImage_Kernel<<<numBlocks, threadsPerBlock>>>(d_Pout, d_Pin, nCols, nRows);
 
     CHECK(cudaMemcpy(Pout_Mat_h.data, d_Pout, size, cudaMemcpyDeviceToHost));
@@ -194,14 +204,14 @@ int main(int argc, char** argv){
     // implement a gpu version that calls a CUDA kernel
     cv::Mat blurredImg_gpu(nRows, nCols, CV_8UC1, cv::Scalar(0));
     startTime = myCPUTimer();
-    blurImage_d(blurredImg_gpu, grayImg, nRows, nCols);
+    blurImage_d(blurredImg_gpu, grayImg, nCols, nRows); // Change the order of arguments
     endTime = myCPUTimer();
     printf("blurImage on GPU:                            %f s\n\n", endTime - startTime); fflush(stdout);
 
     // implement a gpu verions that calls a CUDA kernel which performs a shared-memory tiled comvolution, and filter elements are loaded from constant memory 
     cv::Mat blurredImg_tiled_gpu(nRows, nCols, CV_8UC1, cv::Scalar(0));
     startTime = myCPUTimer();
-    blurImage_d(blurredImg_tiled_gpu, grayImg, nRows, nCols);
+    blurImage_tiled_d(blurredImg_tiled_gpu, grayImg, nCols, nRows); // Change the order of arguments
     endTime = myCPUTimer();
     printf(" (tiled)blurImage on GPU:                            %f s\n\n", endTime - startTime); fflush(stdout);
 
@@ -221,7 +231,7 @@ int main(int argc, char** argv){
     // check if the result blurred images are similar to that of OpenCV's 
     verify(blurredImg_opencv, blurredImg_cpu, nRows, nCols);
     verify(blurredImg_opencv, blurredImg_gpu, nRows, nCols);
-    verify(blurredImg_opencv, blurredImg_tiled_gpu, nRows, nCols);.
+    verify(blurredImg_opencv, blurredImg_tiled_gpu, nRows, nCols);
 
     return 0;
 }
