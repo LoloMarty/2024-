@@ -52,31 +52,117 @@ double myCPUTimer(){
 // A CPU-implementation of image blur using the average box filter
 void blurImage_h(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsigned int nCols)
 {
-
+    for(int i = 0; i < nRows; ++i) {
+        for(int j = 0; j < nCols; ++j) {
+            float sum = 0.0f;
+            for(int fi = -FILTER_RADIUS; fi <= FILTER_RADIUS; ++fi) {
+                for(int fj = -FILTER_RADIUS; fj <= FILTER_RADIUS; ++fj) {
+                    int ii = i + fi;
+                    int jj = j + fj;
+                    if(ii >= 0 && ii < nRows && jj >= 0 && jj < nCols) {
+                        sum += F_h[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * Pin_Mat_h.at<unsigned char>(ii, jj);
+                    }
+                }
+            }
+            Pout_Mat_h.at<unsigned char>(i, j) = static_cast<unsigned char>(sum);
+        }
+    }
 }
 
 // A CUDA kernel of image blur using the average box filter
 __global__ void blurImage_Kernel (unsigned char * Pout, unsigned char * pin, unsigned int width, unsigned int height)
 {
-
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < height && j < width) {
+        float sum = 0.0f;
+        for(int fi = -FILTER_RADIUS; fi <= FILTER_RADIUS; ++fi) {
+            for(int fj = -FILTER_RADIUS; fj <= FILTER_RADIUS; ++fj) {
+                int ii = i + fi;
+                int jj = j + fj;
+                if(ii >= 0 && ii < height && jj >= 0 && jj < width) {
+                    sum += F_h[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * Pin[ii * width + jj];
+                }
+            }
+        }
+        Pout[i * width + j] = static_cast<unsigned char>(sum);
+    }
 }
 
 // A GPU-implementation of image blur using the average box filter
 void blurImage_d(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsigned int nCols)
 {
+    unsigned char *d_Pout, *d_Pin;
+    size_t size = nRows * nCols * sizeof(unsigned char);
 
+    CHECK(cudaMalloc(&d_Pout, size));
+    CHECK(cudaMalloc(&d_Pin, size));
+
+    CHECK(cudaMemcpy(d_Pin, Pin_Mat_h.data, size, cudaMemcpyHostToDevice));
+
+    dim3 threadsPerBlock(16, 16);
+    dim3 numBlocks((nCols + threadsPerBlock.x - 1) / threadsPerBlock.x, (nRows + threadsPerBlock.y - 1) / threadsPerBlock.y);
+
+    blurImage_Kernel<<<numBlocks, threadsPerBlock>>>(d_Pout, d_Pin, nCols, nRows);
+
+    CHECK(cudaMemcpy(Pout_Mat_h.data, d_Pout, size, cudaMemcpyDeviceToHost));
+
+    cudaFree(d_Pout);
+    cudaFree(d_Pin);
 }
 
 // An optimized CUDA kernel of image blur using the average box filter from constant memory 
 __global__ void blurImage_tiled_Kernel (unsigned char * Pout, unsigned char * Pin, unsigned int width, unsigned int height)
 {
+    __shared__ float shared[FILTER_RADIUS * 2 + 1][FILTER_RADIUS * 2 + 1];
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+    int row_o = blockIdx.y * blockDim.y + ty;
+    int col_o = blockIdx.x * blockDim.x + tx;
+    if(row_o < height && col_o < width) {
+        float sum = 0.0f;
+        for(int i = 0; i < FILTER_RADIUS * 2 + 1; ++i) {
+            for(int j = 0; j < FILTER_RADIUS * 2 + 1; ++j) {
+                int row_i = row_o + i - FILTER_RADIUS;
+                int col_i = col_o + j - FILTER_RADIUS;
+                if(row_i >= 0 && row_i < height && col_i >= 0 && col_i < width) {
+                    shared[i][j] = Pin[row_i * width + col_i];
+                } else {
+                    shared[i][j] = 0.0f;
+                }
+                __syncthreads();
+            }
+        }
+        for(int i = 0; i < FILTER_RADIUS * 2 + 1; ++i) {
+            for(int j = 0; j < FILTER_RADIUS * 2 + 1; ++j) {
+                sum += shared[i][j] * F_d[i][j];
+            }
+        }
+        Pout[row_o * width + col_o] = static_cast<unsigned char>(sum);
+    }
 
 }
 
 // A GPU-implementation of image blur, where the kernel performs shared memory tiled convolution using the average box filter from constant memory 
 void blurImage_tiled_d(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsigned int nCols)
 {
+    unsigned char *d_Pout, *d_Pin;
+    size_t size = nRows * nCols * sizeof(unsigned char);
 
+    CHECK(cudaMalloc(&d_Pout, size));
+    CHECK(cudaMalloc(&d_Pin, size));
+
+    CHECK(cudaMemcpy(d_Pin, Pin_Mat_h.data, size, cudaMemcpyHostToDevice));
+
+    dim3 threadsPerBlock(16, 16);
+    dim3 numBlocks((nCols + threadsPerBlock.x - 1) / threadsPerBlock.x, (nRows + threadsPerBlock.y - 1) / threadsPerBlock.y);
+
+    blurImage_tiled_Kernel<<<numBlocks, threadsPerBlock>>>(d_Pout, d_Pin, nCols, nRows);
+
+    CHECK(cudaMemcpy(Pout_Mat_h.data, d_Pout, size, cudaMemcpyDeviceToHost));
+
+    cudaFree(d_Pout);
+    cudaFree(d_Pin);
 }
 
 int main(int argc, char** argv){
