@@ -20,6 +20,8 @@ __constant__ float F_d[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1] = {
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}
 };
 
+//__constant__ float F_d[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1];
+
 //cudaMemcpyToSymbol(F_d, F_h, (2*FILTER_RADIUS+1)*(2*FILTER_RADIUS+1)*sizeof(float));
 
 // check CUDA error if exists
@@ -112,7 +114,7 @@ void blurImage_d(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsi
     dim3 threadsPerBlock(16, 16);
     dim3 numBlocks((nCols + threadsPerBlock.x - 1) / threadsPerBlock.x, (nRows + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
-    cudaMemcpyToSymbol(F_d, F_h, (2*FILTER_RADIUS+1)*(2*FILTER_RADIUS+1)*sizeof(float));
+    //cudaMemcpyToSymbol(F_d, F_h, (2*FILTER_RADIUS+1)*(2*FILTER_RADIUS+1)*sizeof(float));
     blurImage_Kernel<<<numBlocks, threadsPerBlock>>>(d_Pout, d_Pin, nCols, nRows);
 
     CHECK(cudaMemcpy(Pout_Mat_h.data, d_Pout, size, cudaMemcpyDeviceToHost));
