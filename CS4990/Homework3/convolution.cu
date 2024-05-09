@@ -4,7 +4,7 @@
 #define FILTER_RADIUS 2
 
 //for simplicity, we use the constant average filter only in this assignment
-__constant__ float F_h[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1] = {
+float F_h[2*FILTER_RADIUS+1][2*FILTER_RADIUS+1] = {
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
     {1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25, 1.0f / 25}, 
@@ -61,7 +61,7 @@ double myCPUTimer(){
 }
 
 // A CPU-implementation of image blur using the average box filter
-void blurImage_h(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsigned int nCols)
+__host__ void blurImage_h(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsigned int nCols)
 {
     for(int i = 0; i < nRows; ++i) {
         for(int j = 0; j < nCols; ++j) {
@@ -71,7 +71,7 @@ void blurImage_h(cv::Mat Pout_Mat_h, cv::Mat Pin_Mat_h, unsigned int nRows, unsi
                     int ii = i + fi;
                     int jj = j + fj;
                     if(ii >= 0 && ii < nRows && jj >= 0 && jj < nCols) {
-                        sum += F_h[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * Pin_Mat_h.at<unsigned char>(ii, jj);
+                        sum += F_h[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * static_cast<float>(Pin_Mat_h.at<unsigned char>(ii, jj));
                     }
                 }
             }
@@ -92,7 +92,7 @@ __global__ void blurImage_Kernel (unsigned char * Pout, unsigned char * pin, uns
                 int ii = i + fi;
                 int jj = j + fj;
                 if(ii >= 0 && ii < height && jj >= 0 && jj < width) {
-                    sum += F_h[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * pin[ii * width + jj];
+                    sum += F_d[fi + FILTER_RADIUS][fj + FILTER_RADIUS] * pin[ii * width + jj];
                 }
             }
         }
