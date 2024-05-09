@@ -142,7 +142,6 @@ __global__ void blurImage_tiled_Kernel (unsigned char * Pout, unsigned char * Pi
                 } else {
                     shared[i][j] = 0.0f;
                 }
-                __syncthreads();
             }
         }
         for(int i = 0; i < FILTER_RADIUS * 2 + 1; ++i) {
